@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 import { Ticket } from "lucide-react";
 
@@ -23,7 +21,7 @@ const Footer = () => {
                             <div>
                                 <h1 className="text-3xl font-black tracking-tight">
                                     <span className="text-white">Even</span>
-                                    <span className="text-orange-500">to</span>
+                                    <span className="text-orange-700">to</span>
                                 </h1>
 
                                 <p className="mt-1 text-xs text-gray-400">

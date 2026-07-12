@@ -3,13 +3,11 @@ import React from 'react';
 export default function MusicBanner() {
     return (
         <div
-            className="relative w-full max-w-6xl mx-auto h-[380px] rounded-2xl overflow-hidden bg-cover bg-center flex items-center px-8 md:px-16"
+            className="relative w-full max-w-6xl mt-6 mx-auto h-[380px] rounded-2xl overflow-hidden bg-cover bg-center flex items-center px-8 md:px-16"
             style={{ backgroundImage: "url('/musicbanner.webp')" }}
         >
-            {/* Dark overlay */}
             <div className="absolute inset-0 bg-black/40" />
 
-            {/* Content */}
             <div className="relative z-10 flex flex-col items-start max-w-xl text-white font-sans">
                 <span className="bg-[#E996BA] text-black font-extrabold text-xs tracking-wider uppercase px-3 py-1 mb-3 rounded-sm">
                     Get Into It

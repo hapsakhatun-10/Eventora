@@ -1,4 +1,3 @@
-import { BanIcon } from "lucide-react";
 import MusicBanner from "./components/MusicBanner";
 import BannerIcon from "./components/BannerIcon";
 
