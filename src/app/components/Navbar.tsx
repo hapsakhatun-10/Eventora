@@ -12,7 +12,7 @@ const Navbar = () => {
                         href="/"
                         className="group flex items-center gap-3"
                     >
-                        <div className="relative flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-orange-500 via-orange-600 to-red-500 text-white shadow-md transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-[0_12px_35px_rgba(249,115,22,0.45)]">
+                        <div className="relative flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-orange-500 via-orange-600 to-red-500 text-white shadow-md transition-all duration-300  group-hover:shadow-[0_12px_35px_rgba(249,115,22,0.45)]">
                             <Ticket className="h-5 w-5" />
                         </div>
 
@@ -72,7 +72,7 @@ const Navbar = () => {
                     </Link>
 
                     <Link
-                        href="/events"
+                        href="/find-events"
                         className="transition-colors duration-200 hover:text-orange-600"
                     >
                         Find Events
