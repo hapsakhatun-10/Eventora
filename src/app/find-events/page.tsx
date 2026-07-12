@@ -4,9 +4,12 @@ import React, { useState, useEffect, useCallback } from "react";
 import {
     MapPin,
     Loader2,
+    Clock,
 } from "lucide-react";
 import MapSection from "../components/MapSection";
 import Sidebar from "../components/Sidebar";
+import ShareButton from "../components/ShareButton";
+import FavoriteButton from "../components/FavoriteButton";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
@@ -115,9 +118,11 @@ export default function EventDiscoveryPage() {
                                     </div>
                                     <div className="flex-1 flex flex-col justify-between">
                                         <div>
-                                            <h3 className="font-bold text-gray-900 text-base md:text-lg leading-snug group-hover:text-blue-600 transition-colors">
-                                                {event.title}
-                                            </h3>
+                                            <div className="flex items-center gap-2">
+                                                <h3 className="font-bold text-gray-900 text-base md:text-lg leading-snug group-hover:text-blue-600 transition-colors">
+                                                    {event.title}
+                                                </h3>
+                                            </div>
                                             <p className="text-xs text-gray-500 mt-1 font-medium">
                                                 {event.date}{event.startTime ? ` · ${event.startTime}` : ""}
                                             </p>
@@ -128,10 +133,25 @@ export default function EventDiscoveryPage() {
                                                 </p>
                                             )}
                                         </div>
-                                        <div className="mt-2">
-                                            <p className="text-sm font-semibold text-gray-800">
-                                                {event.price ? `৳${event.price.toLocaleString()}` : "Free"}
-                                            </p>
+                                        <div className="mt-2 flex items-center justify-between">
+                                            <div className="flex items-center gap-3">
+                                                <p className="text-sm font-semibold text-gray-800">
+                                                    {event.price ? `৳${event.price.toLocaleString()}` : "Free"}
+                                                </p>
+                                                {/* Sales End Soon Badge */}
+                                                <div className="flex items-center gap-1 bg-red-50 text-red-600 text-[11px] font-semibold px-2 py-1 rounded-full">
+                                                    <Clock size={12} />
+                                                    <span>Sales end soon</span>
+                                                </div>
+                                                <div className="text-yellow-600 text-[11px] font-bold px-2 py-1 rounded-full">
+                                                    Promoted
+                                                </div>
+                                            </div>
+                                            {/* Action Icons */}
+                                            <div className="flex items-center gap-2">
+                                                <ShareButton eventId={event._id} />
+                                                <FavoriteButton eventId={event._id} />
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -146,7 +166,7 @@ export default function EventDiscoveryPage() {
                     eventCount={events.length}
                     onFetchLocation={fetchLocation}
                 />
-            </div >
+            </div>
         </div >
     );
 }
