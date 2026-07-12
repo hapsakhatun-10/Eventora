@@ -1,8 +1,12 @@
+import { BanIcon } from "lucide-react";
+import MusicBanner from "./components/MusicBanner";
+import BannerIcon from "./components/BannerIcon";
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <h2>hiiiiiiiiiii</h2>
-    </div>
+    <>
+      <MusicBanner />
+      <BannerIcon />
+    </>
   );
 }

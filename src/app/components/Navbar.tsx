@@ -27,7 +27,7 @@ const Navbar = () => {
                     </Link>
 
 
-                    <div className="hidden h-12 w-240 overflow-hidden rounded-full border border-gray-300 bg-white transition-all duration-200 hover:border-gray-500 focus-within:border-black focus-within:ring-1 focus-within:ring-black lg:flex">
+                    <div className="hidden h-12 w-220 overflow-hidden rounded-full border border-gray-300 bg-white transition-all duration-200 hover:border-gray-500 focus-within:border-black focus-within:ring-1 focus-within:ring-black lg:flex">
                         {/* Search Input */}
                         <div className="flex flex-1 items-center gap-3 px-5">
                             <Search
@@ -46,7 +46,7 @@ const Navbar = () => {
                         <div className="w-px bg-gray-300" />
 
                         {/* Location Input */}
-                        <div className="flex w-125 items-center gap-3 px-5">
+                        <div className="flex w-110 items-center gap-3 px-5">
                             <MapPin size={20} className="text-gray-500" />
 
                             <input
