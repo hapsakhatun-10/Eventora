@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, FormEvent } from "react";
+import { useState, FormEvent, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import {
     Calendar,
     MapPin,
@@ -17,10 +18,13 @@ import {
     User,
 } from "lucide-react";
 import AsideEvent from "../components/AsideEvent";
+import { useAuth } from "../components/AuthContext";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
 export default function CreateEventPage() {
+    const { user, loading } = useAuth();
+    const router = useRouter();
     const [title, setTitle] = useState("");
     const [category, setCategory] = useState("");
     const [shortDescription, setShortDescription] = useState("");
@@ -41,6 +45,12 @@ export default function CreateEventPage() {
     );
     const [reservedSeating, setReservedSeating] = useState(false);
     const [activeStep, setActiveStep] = useState(1);
+
+    useEffect(() => {
+        if (!loading && !user) {
+            router.push("/login");
+        }
+    }, [user, loading, router]);
 
     const scrollTo = (step: number, id: string) => {
         setActiveStep(step);
@@ -104,8 +114,16 @@ export default function CreateEventPage() {
         }
     };
 
+    if (loading || !user) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="h-8 w-8 animate-spin rounded-full border-4 border-orange-500 border-t-transparent" />
+            </div>
+        );
+    }
+
     return (
-        <div className="min-h-screen flex bg-[#F8F9FA]">
+        <div className="min-h-screen flex flex-col lg:flex-row bg-[#F8F9FA]">
             <AsideEvent
                 title={title}
                 category={category}
@@ -119,19 +137,19 @@ export default function CreateEventPage() {
                 onStepClick={scrollTo}
             />
 
-            <div className="flex-1 min-w-0  border border-gray-200 bg-white shadow-sm overflow-hidden mt-0 my-6 ">
+            <div className="flex-1 min-w-0 border border-gray-200 bg-white shadow-sm overflow-hidden my-0 lg:my-6 mx-0 lg:mx-0 rounded-none lg:rounded-xl">
                 <form onSubmit={handleSubmit}>
                     {/* Header */}
-                    <div className="border-b border-gray-100 px-8 py-6">
-                        <div className="flex items-center gap-4">
-                            <div className="h-14 rounded-2xl bg-blue-100 flex items-center justify-center">
-                                <FileText className="w-7 h-7 text-blue-600" />
+                    <div className="border-b border-gray-100 px-4 sm:px-6 md:px-8 py-5 sm:py-6">
+                        <div className="flex items-center gap-3 sm:gap-4">
+                            <div className="h-11 sm:h-14 w-11 sm:w-14 rounded-xl sm:rounded-2xl bg-blue-100 flex items-center justify-center shrink-0">
+                                <FileText className="w-5 h-5 sm:w-7 sm:h-7 text-blue-600" />
                             </div>
                             <div>
-                                <h2 className="text-2xl font-bold text-gray-900">
+                                <h2 className="text-lg sm:text-2xl font-bold text-gray-900">
                                     Event Overview
                                 </h2>
-                                <p className="text-gray-500 mt-1">
+                                <p className="text-gray-500 mt-0.5 sm:mt-1 text-xs sm:text-sm">
                                     Tell attendees what your event is about.
                                 </p>
                             </div>
@@ -139,7 +157,7 @@ export default function CreateEventPage() {
                     </div>
 
                     {/* Body */}
-                    <div className="p-8 space-y-8">
+                    <div className="p-4 sm:p-6 md:p-8 space-y-6 sm:space-y-8">
                         {/* Section 1: Basic Information */}
                         <div id="section-basic" className="space-y-8">
                             {/* Banner */}
@@ -147,13 +165,13 @@ export default function CreateEventPage() {
                                 <label className="block text-sm font-semibold text-gray-700 mb-3">
                                     Event Banner
                                 </label>
-                                <label className="flex h-72 cursor-pointer items-center justify-center rounded-2xl border-2 border-dashed border-gray-300 bg-gray-50 transition-all hover:border-blue-500 hover:bg-blue-50">
-                                    <div className="text-center">
-                                        <ImagePlus className="mx-auto h-14 w-14 text-gray-400" />
-                                        <h3 className="mt-4 text-lg font-semibold text-gray-700">
+                                <label className="flex h-48 sm:h-60 md:h-72 cursor-pointer items-center justify-center rounded-2xl border-2 border-dashed border-gray-300 bg-gray-50 transition-all hover:border-blue-500 hover:bg-blue-50">
+                                    <div className="text-center px-4">
+                                        <ImagePlus className="mx-auto h-10 w-10 sm:h-14 sm:w-14 text-gray-400" />
+                                        <h3 className="mt-3 sm:mt-4 text-base sm:text-lg font-semibold text-gray-700">
                                             Upload Event Banner
                                         </h3>
-                                        <p className="mt-2 text-sm text-gray-500">
+                                        <p className="mt-1 sm:mt-2 text-xs sm:text-sm text-gray-500">
                                             PNG, JPG • Max 5MB
                                         </p>
                                     </div>
@@ -243,7 +261,7 @@ export default function CreateEventPage() {
 
                         {/* Section 2: Date & Time */}
                         <div id="section-datetime" className="space-y-8">
-                            <h2 className="text-2xl font-black text-[#1E0A3C] tracking-tight">
+                            <h2 className="text-xl sm:text-2xl font-black text-[#1E0A3C] tracking-tight">
                                 Date and location
                             </h2>
 
@@ -391,7 +409,7 @@ export default function CreateEventPage() {
 
                         {/* Section 3: Location */}
                         <div id="section-location" className="space-y-4">
-                            <h2 className="text-2xl font-black text-[#1E0A3C] tracking-tight">
+                            <h2 className="text-xl sm:text-2xl font-black text-[#1E0A3C] tracking-tight">
                                 Location
                             </h2>
 
@@ -527,21 +545,21 @@ export default function CreateEventPage() {
 
                                 {/* Map View */}
                                 {locationTab === "venue" && (
-                                    <div className="w-full h-48 bg-[#BFDFE0] rounded-xl overflow-hidden relative border border-cyan-200 shadow-inner">
-                                        <div className="absolute inset-0 opacity-20 pointer-events-none bg-[radial-gradient(#086b72_1px,transparent_1px)] [background-size:16px_16px]" />
-                                        <span className="absolute top-4 left-10 text-[9px] font-black uppercase tracking-wider text-[#3D696C]/60">
+                                    <div className="w-full h-40 sm:h-48 bg-[#BFDFE0] rounded-xl overflow-hidden relative border border-cyan-200 shadow-inner">
+                                        <div className="absolute inset-0 opacity-20 pointer-events-none bg-[radial-linear(#086b72_1px,transparent_1px)] [background-size:16px_16px]" />
+                                        <span className="hidden sm:block absolute top-4 left-10 text-[9px] font-black uppercase tracking-wider text-[#3D696C]/60">
                                             Pacific Heights
                                         </span>
-                                        <span className="absolute top-4 left-44 text-[9px] font-black uppercase tracking-wider text-[#3D696C]/60">
+                                        <span className="hidden sm:block absolute top-4 left-44 text-[9px] font-black uppercase tracking-wider text-[#3D696C]/60">
                                             Chinatown
                                         </span>
-                                        <span className="absolute top-14 left-36 text-[10px] font-black uppercase tracking-wider text-[#2D5053]">
+                                        <span className="absolute top-4 sm:top-14 left-6 sm:left-36 text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-[#2D5053]">
                                             Union Square
                                         </span>
-                                        <span className="absolute bottom-16 left-28 text-[9px] font-black uppercase tracking-wider text-[#3D696C]/60">
+                                        <span className="hidden sm:block absolute bottom-16 left-28 text-[9px] font-black uppercase tracking-wider text-[#3D696C]/60">
                                             Civic Center
                                         </span>
-                                        <span className="absolute bottom-8 right-20 text-[9px] font-black uppercase tracking-wider text-[#3D696C]/60">
+                                        <span className="absolute bottom-8 right-4 sm:right-20 text-[9px] font-black uppercase tracking-wider text-[#3D696C]/60">
                                             Mission Bay
                                         </span>
                                         <div className="absolute bottom-2 left-3 bg-white/60 px-1 py-0.5 rounded-sm text-[10px] font-bold tracking-tighter text-gray-700 select-none">
@@ -618,10 +636,10 @@ export default function CreateEventPage() {
                         </div>
 
                         {/* 1. OVERVIEW SECTION CARD */}
-                        <section id="section-publish" className="bg-white rounded-xl border border-gray-200 shadow-xs p-6 flex justify-between items-start">
-                            <div className="space-y-2 max-w-2xl">
-                                <h2 className="text-xl font-extrabold text-[#1E0A3C] tracking-tight">Overview</h2>
-                                <p className="text-xs text-gray-500 leading-relaxed">
+                        <section id="section-publish" className="bg-white rounded-xl border border-gray-200 shadow-xs p-4 sm:p-6 flex justify-between items-start gap-3">
+                            <div className="space-y-2 min-w-0">
+                                <h2 className="text-lg sm:text-xl font-extrabold text-[#1E0A3C] tracking-tight">Overview</h2>
+                                <p className="text-[11px] sm:text-xs text-gray-500 leading-relaxed">
                                     Use this section to provide more details about your event. You can include things to know, venue information, accessibility options—anything that will help people know what to expect.
                                 </p>
                             </div>
@@ -631,11 +649,11 @@ export default function CreateEventPage() {
                         </section>
 
                         {/* 2. GOOD TO KNOW CARD (ACTIVE / SELECTED BORDER) */}
-                        <section className="bg-white rounded-xl border-2 border-blue-500 p-6 flex justify-between items-start shadow-xs">
-                            <div className="space-y-6 w-full max-w-2xl">
+                        <section className="bg-white rounded-xl border-2 border-blue-500 p-4 sm:p-6 flex justify-between items-start shadow-xs gap-3">
+                            <div className="space-y-4 sm:space-y-6 w-full min-w-0">
 
                                 <div className="space-y-1">
-                                    <h2 className="text-xl font-extrabold text-[#1E0A3C] tracking-tight">Good to know</h2>
+                                    <h2 className="text-lg sm:text-xl font-extrabold text-[#1E0A3C] tracking-tight">Good to know</h2>
                                 </div>
 
                                 {/* Highlights Sub-section */}
@@ -674,20 +692,20 @@ export default function CreateEventPage() {
                         </section>
 
                         {/* 3. DYNAMIC ADD EXTRA SECTIONS CONTAINER */}
-                        <section className="bg-white rounded-xl border border-dashed border-gray-300 p-6 space-y-4">
+                        <section className="bg-white rounded-xl border border-dashed border-gray-300 p-4 sm:p-6 space-y-4">
                             <div className="space-y-2">
-                                <h2 className="text-xl font-extrabold text-[#1E0A3C] tracking-tight">
+                                <h2 className="text-lg sm:text-xl font-extrabold text-[#1E0A3C] tracking-tight">
                                     Add more sections to your event page
                                 </h2>
-                                <p className="text-xs text-gray-500 leading-relaxed max-w-2xl">
+                                <p className="text-[11px] sm:text-xs text-gray-500 leading-relaxed">
                                     Make your event stand out even more. These sections help attendees find information and answer their questions - which means more ticket sales and less time answering messages.
                                 </p>
                             </div>
 
                             {/* Action Row - Add Lineup Feature */}
-                            <div className="pt-4 border-t border-gray-100 flex items-center justify-between">
-                                <div className="flex items-center gap-4">
-                                    <div className="w-10 h-10 bg-gray-50 rounded-lg flex items-center justify-center text-gray-700 border border-gray-100 shadow-2xs">
+                            <div className="pt-4 border-t border-gray-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                                <div className="flex items-center gap-3 sm:gap-4">
+                                    <div className="w-9 h-9 sm:w-10 sm:h-10 bg-gray-50 rounded-lg flex items-center justify-center text-gray-700 border border-gray-100 shadow-2xs shrink-0">
                                         <User className="w-4 h-4" />
                                     </div>
                                     <div className="flex items-center gap-2">
@@ -698,7 +716,7 @@ export default function CreateEventPage() {
                                     </div>
                                 </div>
 
-                                <div className="flex items-center gap-4">
+                                <div className="flex items-center gap-3 sm:gap-4 ml-12 sm:ml-0">
                                     <button type="button" className="text-xs font-bold text-blue-600 hover:underline">
                                         See examples
                                     </button>

@@ -49,8 +49,8 @@ export default function MapSection({
                                 {userLocation
                                     ? `${eventCount} events nearby`
                                     : locationStatus === "error"
-                                    ? "Location access denied"
-                                    : "Detecting location..."}
+                                        ? "Location access denied"
+                                        : "Detecting location..."}
                             </p>
                         </div>
                     </div>
@@ -66,7 +66,7 @@ export default function MapSection({
                     className="absolute inset-0 opacity-[0.08]"
                     style={{
                         backgroundImage:
-                            "linear-gradient(#64748b 1px, transparent 1px), linear-gradient(90deg, #64748b 1px, transparent 1px)",
+                            "linear-linear(#64748b 1px, transparent 1px), linear-linear(90deg, #64748b 1px, transparent 1px)",
                         backgroundSize: "40px 40px",
                     }}
                 />
