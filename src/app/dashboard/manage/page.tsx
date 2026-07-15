@@ -88,14 +88,14 @@ export default function ManageEventsPage() {
     if (loadingAuth || !user) {
         return (
             <div className="min-h-screen flex items-center justify-center">
-                <Loader2 size={32} className="animate-spin text-orange-500" />
+                <Loader2 size={32} className="animate-spin text-slate-900" />
             </div>
         );
     }
 
     return (
         <div className="min-h-screen bg-gray-50">
-            <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12 flex gap-6">
+            <div className="px-4 sm:px-6 py-8 sm:py-12 flex gap-6">
                 <UserMenu />
                 <div className="flex-1 min-w-0">
                     {/* Header */}
@@ -106,7 +106,7 @@ export default function ManageEventsPage() {
                         </div>
                         <Link
                             href="/create-event"
-                            className="flex items-center gap-2 rounded-xl bg-orange-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-orange-700 transition-all hover:shadow-lg active:scale-[0.98]"
+                            className="flex items-center gap-2 rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-bold text-white hover:bg-blue-900 transition-all hover:shadow-lg active:scale-[0.98]"
                         >
                             <Plus size={18} />
                             Create Event
@@ -132,7 +132,7 @@ export default function ManageEventsPage() {
                             <p className="text-xs text-gray-500 mt-0.5">Past</p>
                         </div>
                         <div className="rounded-xl border border-gray-200 bg-white p-4">
-                            <p className="text-2xl font-extrabold text-orange-600">
+                            <p className="text-2xl font-extrabold text-slate-900">
                                 ৳{myEvents.reduce((sum, e) => sum + (e.price || 0), 0).toLocaleString()}
                             </p>
                             <p className="text-xs text-gray-500 mt-0.5">Total Value</p>
@@ -156,7 +156,7 @@ export default function ManageEventsPage() {
                                 <p className="text-gray-400 text-sm mt-1">Create your first event to get started</p>
                                 <Link
                                     href="/create-event"
-                                    className="inline-flex items-center gap-2 mt-5 rounded-xl bg-orange-600 px-6 py-3 text-sm font-bold text-white hover:bg-orange-700 transition-all"
+                                    className="inline-flex items-center gap-2 mt-5 rounded-xl bg-slate-900 px-6 py-3 text-sm font-bold text-white hover:bg-blue-900 transition-all"
                                 >
                                     <Plus size={16} />
                                     Create Event
@@ -177,7 +177,7 @@ export default function ManageEventsPage() {
                                                 {bannerUrl ? (
                                                     <img src={bannerUrl} alt={event.title} loading="lazy" decoding="async" className="h-full w-full object-cover" />
                                                 ) : (
-                                                    <div className="h-full w-full bg-linear-to-br from-orange-500 to-red-500 flex items-center justify-center text-white text-[10px] font-bold">
+                                                    <div className="h-full w-full bg-linear-to-br from-slate-900 to-blue-900 flex items-center justify-center text-white text-[10px] font-bold">
                                                         {event.category || "Event"}
                                                     </div>
                                                 )}
@@ -186,7 +186,7 @@ export default function ManageEventsPage() {
                                             {/* Info */}
                                             <div className="flex-1 min-w-0">
                                                 <div className="flex items-center gap-2">
-                                                    <Link href={`/event/${event._id}`} className="font-bold text-gray-900 text-sm hover:text-orange-600 transition-colors truncate">
+                                                    <Link href={`/event/${event._id}`} className="font-bold text-gray-900 text-sm hover:text-slate-900 transition-colors truncate">
                                                         {event.title}
                                                     </Link>
                                                     {isPast && (

@@ -19,14 +19,14 @@ interface SidebarProps {
 }
 
 const categories = [
-    { id: "business", name: "Business", icon: Briefcase, color: "text-blue-600 bg-blue-100" },
-    { id: "food", name: "Food & Drink", icon: Utensils, color: "text-orange-600 bg-orange-100" },
-    { id: "health", name: "Health", icon: HeartPulse, color: "text-rose-600 bg-rose-100" },
-    { id: "music", name: "Music", icon: Music, color: "text-violet-600 bg-violet-100" },
-    { id: "arts", name: "Arts", icon: Palette, color: "text-pink-600 bg-pink-100" },
-    { id: "tech", name: "Tech", icon: Laptop, color: "text-cyan-600 bg-cyan-100" },
-    { id: "sports", name: "Sports", icon: Trophy, color: "text-green-600 bg-green-100" },
-    { id: "other", name: "Other", icon: MoreHorizontal, color: "text-gray-600 bg-gray-100" },
+    { id: "business", name: "Business", icon: Briefcase, color: "text-slate-700 bg-slate-100" },
+    { id: "food", name: "Food & Drink", icon: Utensils, color: "text-slate-700 bg-slate-100" },
+    { id: "health", name: "Health", icon: HeartPulse, color: "text-slate-700 bg-slate-100" },
+    { id: "music", name: "Music", icon: Music, color: "text-slate-700 bg-slate-100" },
+    { id: "arts", name: "Arts", icon: Palette, color: "text-slate-700 bg-slate-100" },
+    { id: "tech", name: "Tech", icon: Laptop, color: "text-slate-700 bg-slate-100" },
+    { id: "sports", name: "Sports", icon: Trophy, color: "text-slate-700 bg-slate-100" },
+    { id: "other", name: "Other", icon: MoreHorizontal, color: "text-slate-700 bg-slate-100" },
 ];
 
 export default function Sidebar({ className = "", selectedCategories = [], onCategoryChange }: SidebarProps) {
@@ -42,13 +42,13 @@ export default function Sidebar({ className = "", selectedCategories = [], onCat
     };
 
     const content = (
-        <div className="bg-gray-50 rounded-2xl p-5 space-y-6">
+        <div className="bg-slate-50 rounded-2xl p-5 space-y-6">
             <div className="flex items-center justify-between">
-                <h2 className="text-xl font-bold text-gray-900">Filters</h2>
+                <h2 className="text-xl font-bold text-slate-900">Filters</h2>
                 {selectedCategories.length > 0 && (
                     <button
                         onClick={() => onCategoryChange?.([])}
-                        className="text-xs font-semibold text-blue-600 hover:underline"
+                        className="text-xs font-semibold text-slate-900 hover:underline"
                     >
                         Clear all
                     </button>
@@ -57,7 +57,7 @@ export default function Sidebar({ className = "", selectedCategories = [], onCat
 
             {/* Category */}
             <div>
-                <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-3">
+                <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-3">
                     Category
                 </h3>
                 <ul className="space-y-1 text-sm font-medium">
@@ -68,16 +68,16 @@ export default function Sidebar({ className = "", selectedCategories = [], onCat
                             <li
                                 key={cat.id}
                                 onClick={() => toggleCategory(cat.id)}
-                                className={`flex items-center gap-3 p-2.5 rounded-xl cursor-pointer transition-colors ${isActive ? "bg-blue-50 border border-blue-200" : "hover:bg-white border border-transparent"}`}
+                                className={`flex items-center gap-3 p-2.5 rounded-xl cursor-pointer transition-colors ${isActive ? "bg-slate-100 border border-slate-200" : "hover:bg-gray-500 border border-transparent"}`}
                             >
                                 <span className={`flex items-center justify-center w-8 h-8 rounded-lg ${cat.color}`}>
                                     <Icon size={16} />
                                 </span>
-                                <span className={isActive ? "text-blue-700 font-semibold" : "text-gray-700"}>
+                                <span className={isActive ? "text-slate-900 font-semibold" : "text-slate-700"}>
                                     {cat.name}
                                 </span>
                                 {isActive && (
-                                    <span className="ml-auto w-2 h-2 rounded-full bg-blue-500" />
+                                    <span className="ml-auto w-2 h-2 rounded-full bg-slate-900" />
                                 )}
                             </li>
                         );

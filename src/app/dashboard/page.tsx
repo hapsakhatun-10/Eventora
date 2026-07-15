@@ -55,7 +55,7 @@ export default function DashboardPage() {
     if (loadingAuth || !user) {
         return (
             <div className="min-h-screen flex items-center justify-center">
-                <Loader2 size={32} className="animate-spin text-orange-500" />
+                <Loader2 size={32} className="animate-spin text-slate-900" />
             </div>
         );
     }
@@ -64,12 +64,12 @@ export default function DashboardPage() {
 
     return (
         <div className="min-h-screen bg-gray-50">
-            <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12 flex gap-6">
+            <div className="px-4 sm:px-6 py-8 sm:py-12 flex gap-6">
                 <UserMenu />
                 <div className="flex-1 min-w-0">
                 {/* Header */}
                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 mb-8">
-                    <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 text-white text-xl font-bold shadow-lg">
+                    <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-slate-900 to-blue-900 text-white text-xl font-bold shadow-lg">
                         {initials}
                     </div>
                     <div className="flex-1">
@@ -78,7 +78,7 @@ export default function DashboardPage() {
                     </div>
                     <Link
                         href="/create-event"
-                        className="flex items-center gap-2 rounded-xl bg-orange-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-orange-700 transition-all hover:shadow-lg active:scale-[0.98]"
+                        className="flex items-center gap-2 rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-bold text-white hover:bg-blue-900 transition-all hover:shadow-lg active:scale-[0.98]"
                     >
                         <Plus size={18} />
                         Create Event
@@ -89,7 +89,7 @@ export default function DashboardPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
                     <div className="rounded-2xl border border-gray-200 bg-white p-5">
                         <div className="flex items-center gap-3">
-                            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-50 text-orange-600">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-50 text-slate-900">
                                 <Ticket size={18} />
                             </div>
                             <div>
@@ -130,13 +130,13 @@ export default function DashboardPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
                     <Link
                         href="/dashboard/manage"
-                        className="flex items-center gap-4 rounded-2xl border border-gray-200 bg-white p-5 hover:border-orange-200 hover:bg-orange-50 transition-all group"
+                        className="flex items-center gap-4 rounded-2xl border border-gray-200 bg-white p-5 hover:border-slate-300 hover:bg-slate-50 transition-all group"
                     >
-                        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-orange-100 text-orange-600 group-hover:bg-orange-200 transition-colors">
+                        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-slate-100 text-slate-900 group-hover:bg-slate-200 transition-colors">
                             <FolderKanban size={22} />
                         </div>
                         <div>
-                            <p className="font-bold text-gray-900 group-hover:text-orange-600 transition-colors">Manage Events</p>
+                            <p className="font-bold text-gray-900 group-hover:text-slate-900 transition-colors">Manage Events</p>
                             <p className="text-xs text-gray-500 mt-0.5">Edit and delete your events</p>
                         </div>
                     </Link>
@@ -158,7 +158,7 @@ export default function DashboardPage() {
                 <div className="rounded-2xl border border-gray-200 bg-white">
                     <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
                         <h2 className="text-lg font-bold text-gray-900">My Events</h2>
-                        <Link href="/dashboard/manage" className="text-sm font-semibold text-orange-600 hover:text-orange-700 transition-colors">
+                        <Link href="/dashboard/manage" className="text-sm font-semibold text-slate-900 hover:text-blue-900 transition-colors">
                             Manage All
                         </Link>
                     </div>
@@ -173,7 +173,7 @@ export default function DashboardPage() {
                                 <p className="text-gray-500 font-medium">You haven&apos;t created any events yet</p>
                                 <Link
                                     href="/create-event"
-                                    className="inline-flex items-center gap-2 mt-4 rounded-xl bg-orange-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-orange-700 transition-all"
+                                    className="inline-flex items-center gap-2 mt-4 rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-bold text-white hover:bg-blue-900 transition-all"
                                 >
                                     <Plus size={16} />
                                     Create Your First Event
@@ -193,13 +193,13 @@ export default function DashboardPage() {
                                                 {bannerUrl ? (
                                                     <img src={bannerUrl} alt={event.title} loading="lazy" decoding="async" className="h-full w-full object-cover" />
                                                 ) : (
-                                                    <div className="h-full w-full bg-linear-to-br from-orange-500 to-red-500 flex items-center justify-center text-white text-xs font-bold">
+                                                    <div className="h-full w-full bg-linear-to-br from-slate-900 to-blue-900 flex items-center justify-center text-white text-xs font-bold">
                                                         {event.category || "Event"}
                                                     </div>
                                                 )}
                                             </div>
                                             <div className="flex-1 min-w-0">
-                                                <h3 className="font-bold text-gray-900 text-sm group-hover:text-orange-600 transition-colors truncate">
+                                                <h3 className="font-bold text-gray-900 text-sm group-hover:text-slate-900 transition-colors truncate">
                                                     {event.title}
                                                 </h3>
                                                 <p className="text-xs text-gray-500 mt-0.5">

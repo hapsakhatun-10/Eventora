@@ -88,14 +88,14 @@ export default function LikedEventsPage() {
     if (loadingAuth || !user) {
         return (
             <div className="min-h-screen flex items-center justify-center">
-                <Loader2 size={32} className="animate-spin text-orange-500" />
+                <Loader2 size={32} className="animate-spin text-slate-900" />
             </div>
         );
     }
 
     return (
         <div className="min-h-screen bg-gray-50">
-            <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12 flex gap-6">
+            <div className="px-4 sm:px-6 py-8 sm:py-12 flex gap-6">
                 <UserMenu />
                 <div className="flex-1 min-w-0">
                     {/* Header */}
@@ -116,7 +116,7 @@ export default function LikedEventsPage() {
                             <p className="text-gray-400 text-sm mt-1">Browse events and tap the heart icon to save them here</p>
                             <Link
                                 href="/find-events"
-                                className="inline-flex items-center gap-2 mt-5 rounded-xl bg-orange-600 px-6 py-3 text-sm font-bold text-white hover:bg-orange-700 transition-all"
+                                className="inline-flex items-center gap-2 mt-5 rounded-xl bg-slate-900 px-6 py-3 text-sm font-bold text-white hover:bg-blue-900 transition-all"
                             >
                                 Browse Events
                             </Link>
@@ -142,7 +142,7 @@ export default function LikedEventsPage() {
                                                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                                                 />
                                             ) : (
-                                                <div className="w-full h-full bg-linear-to-br from-orange-500 to-red-500 flex items-center justify-center text-white font-bold">
+                                                <div className="w-full h-full bg-linear-to-br from-slate-900 to-blue-900 flex items-center justify-center text-white font-bold">
                                                     {event.category || "Event"}
                                                 </div>
                                             )}
@@ -160,7 +160,7 @@ export default function LikedEventsPage() {
                                         {/* Info */}
                                         <div className="p-4 space-y-3">
                                             <Link href={`/event/${event._id}`}>
-                                                <h3 className="font-bold text-gray-900 text-base leading-snug group-hover:text-orange-600 transition-colors line-clamp-2">
+                                                <h3 className="font-bold text-gray-900 text-base leading-snug group-hover:text-slate-900 transition-colors line-clamp-2">
                                                     {event.title}
                                                 </h3>
                                             </Link>

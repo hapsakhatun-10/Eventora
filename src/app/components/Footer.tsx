@@ -5,14 +5,13 @@ const Footer = () => {
     const year = new Date().getFullYear();
 
     return (
-        <footer className="bg-[#1b0b33] text-gray-300">
+        <footer className="bg-slate-900 text-slate-300">
             <div className="mx-auto px-6 sm:px-10 md:px-14 lg:px-18 py-10 sm:py-14">
-                {/* Logo */}
                 {/* Logo */}
                 <div className="mb-12">
                     <Link href="/" className="group flex w-fit items-center gap-3">
                         {/* Logo Icon */}
-                        <div className="relative flex h-12 w-12 items-center justify-center rounded-2xl bg-linear-to-br from-orange-500 via-orange-600 to-red-500 text-white shadow-xl transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-2xl">
+                        <div className="relative flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 text-white shadow-xl transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-2xl">
                             <Ticket className="h-6 w-6" />
                         </div>
 
@@ -20,11 +19,11 @@ const Footer = () => {
                         <div>
                             <h1 className="text-3xl font-black tracking-tight">
                                 <span className="text-white">Even</span>
-                                <span className="text-orange-700">to</span>
+                                <span className="text-slate-400">to</span>
                             </h1>
 
-                            <p className="mt-1 text-xs text-gray-400">
-                                Discover • Connect • Celebrate
+                            <p className="mt-1 text-xs text-slate-400">
+                                Discover &bull; Connect &bull; Celebrate
                             </p>
                         </div>
                     </Link>
@@ -164,8 +163,8 @@ const Footer = () => {
                 {/* Bottom */}
                 <div className="mt-14 border-t border-white/10 pt-6">
                     <div className="flex flex-col items-center justify-between gap-5 lg:flex-row">
-                        <p className="text-sm text-gray-400">
-                            © {year} Evento
+                        <p className="text-sm text-slate-400">
+                            &copy; {year} Evento
                         </p>
 
                         <div className="flex flex-wrap items-center justify-center gap-4 text-sm">
@@ -173,49 +172,49 @@ const Footer = () => {
                                 How It Works
                             </Link>
 
-                            <span>•</span>
+                            <span>&bull;</span>
 
                             <Link href="/pricing" className="footer-link">
                                 Pricing
                             </Link>
 
-                            <span>•</span>
+                            <span>&bull;</span>
 
                             <Link href="/contact" className="footer-link">
                                 Contact
                             </Link>
 
-                            <span>•</span>
+                            <span>&bull;</span>
 
                             <Link href="/about" className="footer-link">
                                 About
                             </Link>
 
-                            <span>•</span>
+                            <span>&bull;</span>
 
                             <Link href="/blog" className="footer-link">
                                 Blog
                             </Link>
 
-                            <span>•</span>
+                            <span>&bull;</span>
 
                             <Link href="/careers" className="footer-link">
                                 Careers
                             </Link>
 
-                            <span>•</span>
+                            <span>&bull;</span>
 
                             <Link href="/privacy" className="footer-link">
                                 Privacy
                             </Link>
 
-                            <span>•</span>
+                            <span>&bull;</span>
 
                             <Link href="/terms" className="footer-link">
                                 Terms
                             </Link>
 
-                            <span>•</span>
+                            <span>&bull;</span>
 
                             <Link href="/cookies" className="footer-link">
                                 Cookies

@@ -2,7 +2,7 @@
 
 @layer components {
   .nav-link {
-    @apply relative transition-colors duration-200 hover:text-orange-600;
+    @apply relative transition-colors duration-200;
   }
 
   .nav-link::after {
@@ -12,13 +12,22 @@
     bottom: -4px;
     width: 0;
     height: 2px;
-    background-color: #ea580c;
-    /* orange-600 */
-    transition: width 0.3s ease;
+    background-color: #0F172A;
+    border-radius: 1px;
+    transition: width 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
   }
 
   .nav-link:hover::after {
     width: 100%;
+  }
+
+  /* Active state: underline always visible */
+  .nav-link--active::after {
+    width: 100%;
+  }
+
+  .nav-link--active {
+    @apply text-slate-900 font-semibold;
   }
 }
 
@@ -29,7 +38,7 @@
   }
 
   .footer-link {
-    @apply text-[13px] leading-6 text-gray-400 transition-colors duration-200 hover:text-white;
+    @apply text-[13px] leading-6 text-slate-400 transition-colors duration-200 hover:text-white;
   }
 }
 
@@ -47,4 +56,13 @@
 @keyframes slideIn {
   0% { opacity: 0; transform: translateX(40px); }
   100% { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  animation: marquee 30s linear infinite;
 }

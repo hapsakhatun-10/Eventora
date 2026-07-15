@@ -34,11 +34,11 @@ export default function MapSection({
             <div className="absolute top-0 left-0 right-0 z-20 bg-white/95 backdrop-blur-sm border-b border-gray-200 px-4 py-3">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                        <div className="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center">
+                        <div className="w-7 h-7 rounded-lg bg-slate-100 flex items-center justify-center">
                             {locationStatus === "loading" ? (
-                                <Loader2 size={15} className="text-blue-600 animate-spin" />
+                                <Loader2 size={15} className="text-slate-900 animate-spin" />
                             ) : (
-                                <MapPinned size={15} className="text-blue-600" />
+                                <MapPinned size={15} className="text-slate-900" />
                             )}
                         </div>
                         <div>
@@ -104,7 +104,7 @@ export default function MapSection({
                     <button
                         onClick={onFetchLocation}
                         disabled={locationStatus === "loading"}
-                        className="w-8 h-8 bg-white rounded-lg border border-gray-200 flex items-center justify-center text-blue-600 hover:bg-blue-50 shadow-sm disabled:opacity-50"
+                        className="w-8 h-8 bg-white rounded-lg border border-gray-200 flex items-center justify-center text-slate-900 hover:bg-slate-50 shadow-sm disabled:opacity-50"
                     >
                         {locationStatus === "loading" ? (
                             <Loader2 size={14} className="animate-spin" />
@@ -120,9 +120,9 @@ export default function MapSection({
                         className="absolute -translate-x-1/2 -translate-y-1/2 z-10 group/user"
                         style={{ top: "50%", left: "50%" }}
                     >
-                        <span className="absolute inset-0 -m-4 rounded-full bg-blue-500 opacity-15 animate-ping" />
-                        <span className="absolute inset-0 -m-2 rounded-full bg-blue-400 opacity-25 animate-ping [animation-delay:0.5s]" />
-                        <div className="relative w-4 h-4 bg-blue-600 rounded-full border-[3px] border-white shadow-lg z-10" />
+                        <span className="absolute inset-0 -m-4 rounded-full bg-slate-900 opacity-15 animate-ping" />
+                        <span className="absolute inset-0 -m-2 rounded-full bg-slate-700 opacity-25 animate-ping [animation-delay:0.5s]" />
+                        <div className="relative w-4 h-4 bg-slate-900 rounded-full border-[3px] border-white shadow-lg z-10" />
                         <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-white text-gray-900 text-[10px] font-semibold px-2.5 py-1.5 rounded-lg whitespace-nowrap opacity-0 group-hover/user:opacity-100 transition-opacity pointer-events-none shadow-lg border border-gray-200">
                             You are here
                             <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-white" />
@@ -139,7 +139,7 @@ export default function MapSection({
                         </p>
                         <button
                             onClick={onFetchLocation}
-                            className="mt-2 text-[10px] font-bold text-blue-600 hover:text-blue-700"
+                            className="mt-2 text-[10px] font-bold text-slate-900 hover:underline"
                         >
                             Try again
                         </button>
@@ -153,7 +153,7 @@ export default function MapSection({
                             <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
                             <span className="text-[11px] font-semibold text-gray-700">Live</span>
                         </div>
-                        <button className="text-[11px] font-bold text-blue-600 hover:text-blue-700 transition-colors">
+                        <button className="text-[11px] font-bold text-slate-900 hover:underline transition-colors">
                             View full map →
                         </button>
                     </div>

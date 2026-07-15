@@ -103,19 +103,19 @@ export default function EventDiscoveryPage() {
             </div>
 
             <main className="lg:col-span-6 space-y-4 sm:space-y-6">
-                <header className="border-b border-gray-100 pb-4">
+                <header className="border-b border-slate-100 pb-4">
                     <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0">
-                            <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-gray-900 tracking-tight">
+                            <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight">
                                 Events and Things to do in Dhaka, Bangladesh
                             </h1>
-                            <p className="text-xs sm:text-sm text-gray-500 mt-1">
+                            <p className="text-xs sm:text-sm text-slate-500 mt-1">
                                 Search for something you love or check out popular events in your area.
                             </p>
                         </div>
                         <button
                             onClick={() => setMobileFiltersOpen(true)}
-                            className="flex items-center gap-1.5 rounded-full border border-gray-300 px-3 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-50 transition-colors shrink-0 lg:hidden"
+                            className="flex items-center gap-1.5 rounded-full border border-slate-300 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors shrink-0 lg:hidden"
                         >
                             <SlidersHorizontal size={14} />
                             Filters
@@ -124,16 +124,16 @@ export default function EventDiscoveryPage() {
                 </header>
                 {loading ? (
                     <div className="flex justify-center py-16">
-                        <Loader2 size={24} className="animate-spin text-gray-400" />
+                        <Loader2 size={24} className="animate-spin text-slate-400" />
                     </div>
                 ) : error ? (
                     <div className="text-center py-16">
                         <p className="text-red-500 text-lg font-medium">{error}</p>
-                        <button onClick={() => fetchEvents(selectedCategories, page)} className="mt-3 text-sm font-semibold text-orange-600 hover:underline">Retry</button>
+                        <button onClick={() => fetchEvents(selectedCategories, page)} className="mt-3 text-sm font-semibold text-slate-900 hover:underline">Retry</button>
                     </div>
                 ) : events.length === 0 ? (
                     <div className="text-center py-16">
-                        <p className="text-gray-500 text-lg font-medium">No events found</p>
+                        <p className="text-slate-500 text-lg font-medium">No events found</p>
                     </div>
                 ) : (
                     events.map((event) => {
@@ -143,9 +143,9 @@ export default function EventDiscoveryPage() {
                             <Link
                                 key={event._id}
                                 href={`/event/${event._id}`}
-                                className="flex flex-col sm:flex-row gap-3 sm:gap-4 border-b border-gray-100 pb-5 group cursor-pointer"
+                                className="flex flex-col sm:flex-row gap-3 sm:gap-4 border-b border-slate-100 pb-5 group cursor-pointer"
                             >
-                                <div className="w-full sm:w-48 h-40 sm:h-32 flex-shrink-0 bg-gray-100 rounded-xl overflow-hidden">
+                                <div className="w-full sm:w-48 h-40 sm:h-32 flex-shrink-0 bg-slate-100 rounded-xl overflow-hidden">
                                     {bannerUrl ? (
                                         <img
                                             src={bannerUrl}
@@ -155,7 +155,7 @@ export default function EventDiscoveryPage() {
                                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
                                         />
                                     ) : (
-                                        <div className="w-full h-full bg-linear-to-br from-blue-500 to-cyan-400 flex items-center justify-center text-white text-xs font-bold">
+                                        <div className="w-full h-full bg-gradient-to-br from-slate-900 to-blue-900 flex items-center justify-center text-white text-xs font-bold">
                                             {event.category || "Event"}
                                         </div>
                                     )}
@@ -163,15 +163,15 @@ export default function EventDiscoveryPage() {
                                 <div className="flex-1 flex flex-col justify-between">
                                     <div>
                                         <div className="flex items-center gap-2">
-                                            <h3 className="font-bold text-gray-900 text-base leading-snug group-hover:text-blue-600 transition-colors line-clamp-2">
+                                            <h3 className="font-bold text-slate-900 text-base leading-snug group-hover:text-slate-700 transition-colors line-clamp-2">
                                                 {event.title}
                                             </h3>
                                         </div>
-                                        <p className="text-xs text-gray-500 mt-1 font-medium">
+                                        <p className="text-xs text-slate-500 mt-1 font-medium">
                                             {event.date}{event.startTime ? ` · ${event.startTime}` : ""}
                                         </p>
                                         {location && (
-                                            <p className="text-xs text-gray-400 mt-0.5 flex items-center gap-1">
+                                            <p className="text-xs text-slate-400 mt-0.5 flex items-center gap-1">
                                                 <MapPin size={11} className="shrink-0" />
                                                 <span className="truncate">{location}</span>
                                             </p>
@@ -179,14 +179,14 @@ export default function EventDiscoveryPage() {
                                     </div>
                                     <div className="mt-2 flex items-center justify-between gap-2">
                                         <div className="flex items-center gap-2 flex-wrap">
-                                            <p className="text-sm font-semibold text-gray-800">
+                                            <p className="text-sm font-semibold text-slate-800">
                                                 {event.price ? `৳${event.price.toLocaleString()}` : "Free"}
                                             </p>
-                                            <div className="flex items-center gap-1 bg-red-50 text-red-600 text-[10px] sm:text-[11px] font-semibold px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full">
+                                            <div className="flex items-center gap-1 bg-slate-100 text-slate-700 text-[10px] sm:text-[11px] font-semibold px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full">
                                                 <Clock size={11} />
                                                 <span className="whitespace-nowrap">Sales end soon</span>
                                             </div>
-                                            <div className="text-yellow-600 text-[10px] sm:text-[11px] font-bold px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full">
+                                            <div className="text-slate-600 text-[10px] sm:text-[11px] font-bold px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full">
                                                 Promoted
                                             </div>
                                         </div>
@@ -201,22 +201,22 @@ export default function EventDiscoveryPage() {
                     })
                 )}
                 {totalPages > 1 && (
-                    <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                    <div className="flex items-center justify-between pt-4 border-t border-slate-100">
                         <button
                             onClick={() => setPage((p) => Math.max(1, p - 1))}
                             disabled={page === 1}
-                            className="flex items-center gap-1.5 rounded-xl border border-gray-300 px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                            className="flex items-center gap-1.5 rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                         >
                             <ChevronLeft size={16} />
                             Previous
                         </button>
-                        <span className="text-sm font-medium text-gray-500">
+                        <span className="text-sm font-medium text-slate-500">
                             Page {page} of {totalPages}
                         </span>
                         <button
                             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                             disabled={page === totalPages}
-                            className="flex items-center gap-1.5 rounded-xl border border-gray-300 px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                            className="flex items-center gap-1.5 rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                         >
                             Next
                             <ChevronRight size={16} />
@@ -239,13 +239,13 @@ export default function EventDiscoveryPage() {
             <div className="fixed inset-0 z-50 lg:hidden">
                 <div className="absolute inset-0 bg-black/40" onClick={() => setMobileFiltersOpen(false)} />
                 <div className="absolute top-0 left-0 bottom-0 w-80 max-w-[85vw] bg-white shadow-xl overflow-y-auto">
-                    <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200">
-                        <h2 className="text-lg font-bold text-gray-900">Filters</h2>
+                    <div className="flex items-center justify-between px-5 py-4 border-b border-slate-200">
+                        <h2 className="text-lg font-bold text-slate-900">Filters</h2>
                         <button
                             onClick={() => setMobileFiltersOpen(false)}
-                            className="p-1.5 rounded-full hover:bg-gray-100 transition-colors"
+                            className="p-1.5 rounded-full hover:bg-slate-100 transition-colors"
                         >
-                            <X size={20} className="text-gray-500" />
+                            <X size={20} className="text-slate-500" />
                         </button>
                     </div>
                     <div className="p-5">

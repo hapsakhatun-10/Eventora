@@ -135,7 +135,7 @@ export default function CreateEventPage() {
     if (!authChecked || !user) {
         return (
             <div className="min-h-screen flex items-center justify-center">
-                <div className="h-8 w-8 animate-spin rounded-full border-4 border-orange-500 border-t-transparent" />
+                <div className="h-8 w-8 animate-spin rounded-full border-4 border-slate-900 border-t-transparent" />
             </div>
         );
     }
@@ -329,7 +329,7 @@ export default function CreateEventPage() {
 
                         {/* Section 2: Date & Time */}
                         <div id="section-datetime" className="space-y-8">
-                            <h2 className="text-xl sm:text-2xl font-black text-[#1E0A3C] tracking-tight">
+                            <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
                                 Date and location
                             </h2>
 
@@ -477,7 +477,7 @@ export default function CreateEventPage() {
 
                         {/* Section 3: Location */}
                         <div id="section-location" className="space-y-4">
-                            <h2 className="text-xl sm:text-2xl font-black text-[#1E0A3C] tracking-tight">
+                            <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
                                 Location
                             </h2>
 
@@ -706,7 +706,7 @@ export default function CreateEventPage() {
                         {/* 1. OVERVIEW SECTION CARD */}
                         <section id="section-publish" className="bg-white rounded-xl border border-gray-200 shadow-xs p-4 sm:p-6 flex justify-between items-start gap-3">
                             <div className="space-y-2 min-w-0">
-                                <h2 className="text-lg sm:text-xl font-extrabold text-[#1E0A3C] tracking-tight">Overview</h2>
+                                <h2 className="text-lg sm:text-xl font-extrabold text-slate-900 tracking-tight">Overview</h2>
                                 <p className="text-[11px] sm:text-xs text-gray-500 leading-relaxed">
                                     Use this section to provide more details about your event. You can include things to know, venue information, accessibility options—anything that will help people know what to expect.
                                 </p>
@@ -720,7 +720,7 @@ export default function CreateEventPage() {
                         <section className="bg-white rounded-xl border-2 border-blue-500 p-4 sm:p-6 flex justify-between items-start shadow-xs gap-3">
                             <div className="space-y-4 sm:space-y-6 w-full min-w-0">
                                 <div className="space-y-1">
-                                    <h2 className="text-lg sm:text-xl font-extrabold text-[#1E0A3C] tracking-tight">Good to know</h2>
+                                    <h2 className="text-lg sm:text-xl font-extrabold text-slate-900 tracking-tight">Good to know</h2>
                                 </div>
 
                                 {/* Highlights Sub-section */}
@@ -740,7 +740,7 @@ export default function CreateEventPage() {
                                 <div className="space-y-3">
                                     <h3 className="text-sm font-bold text-gray-800">Frequently asked questions</h3>
                                     <div className="flex items-center gap-2 text-xs font-medium text-gray-700">
-                                        <Lightbulb className="w-4 h-4 text-yellow-500 fill-yellow-400 shrink-0" />
+                                        <Lightbulb className="w-4 h-4 text-slate-600 fill-slate-400 shrink-0" />
                                         <span>Events with FAQs have 8% more organic traffic</span>
                                     </div>
                                     <button type="button" className="text-xs font-bold text-blue-600 hover:text-blue-800 flex items-center gap-1 transition">
@@ -756,7 +756,7 @@ export default function CreateEventPage() {
                         {/* 3. DYNAMIC ADD EXTRA SECTIONS */}
                         <section className="bg-white rounded-xl border border-dashed border-gray-300 p-4 sm:p-6 space-y-4">
                             <div className="space-y-2">
-                                <h2 className="text-lg sm:text-xl font-extrabold text-[#1E0A3C] tracking-tight">
+                                <h2 className="text-lg sm:text-xl font-extrabold text-slate-900 tracking-tight">
                                     Add more sections to your event page
                                 </h2>
                                 <p className="text-[11px] sm:text-xs text-gray-500 leading-relaxed">

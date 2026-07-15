@@ -69,11 +69,11 @@ export default function UserMenu() {
   const { logout } = useAuth();
 
   return (
-    <aside className="w-[340px] rounded-2xl border border-gray-200 bg-white shadow-xl overflow-hidden">
+    <aside className="w-[340px] rounded-2xl border border-slate-200 bg-white shadow-xl overflow-hidden">
       {/* Header */}
-      <Link href="/dashboard" className="block px-7 py-6 border-b bg-gradient-to-r from-orange-500 via-orange-600 to-red-500">
+      <Link href="/dashboard" className="block px-7 py-6 border-b bg-gradient-to-r from-slate-900 via-blue-900 to-slate-800">
         <h2 className="text-white text-xl font-bold">My Account</h2>
-        <p className="text-orange-100 text-sm mt-1">
+        <p className="text-slate-300 text-sm mt-1">
           Manage your events and profile
         </p>
       </Link>
@@ -82,7 +82,7 @@ export default function UserMenu() {
         {menuSections.map((section, sectionIndex) => (
           <div
             key={sectionIndex}
-            className={`px-3 ${sectionIndex !== 0 ? "mt-4 pt-4 border-t border-gray-100" : ""
+            className={`px-3 ${sectionIndex !== 0 ? "mt-4 pt-4 border-t border-slate-100" : ""
               }`}
           >
             {section.map((item) => {
@@ -95,15 +95,15 @@ export default function UserMenu() {
                   href={item.href}
                   className={`group flex items-center gap-4 rounded-xl px-4 py-3 transition-all duration-300
                     ${active
-                      ? "bg-orange-50 text-orange-600 shadow-sm"
-                      : "text-gray-700 hover:bg-gray-50 hover:text-orange-600 hover:translate-x-1"
+                      ? "bg-slate-100 text-slate-900 shadow-sm"
+                      : "text-slate-700 hover:bg-slate-50 hover:text-slate-900 hover:translate-x-1"
                     }`}
                 >
                   <div
                     className={`flex h-10 w-10 items-center justify-center rounded-lg transition-all
                       ${active
-                        ? "bg-orange-500 text-white"
-                        : "bg-gray-100 text-gray-500 group-hover:bg-orange-100 group-hover:text-orange-600"
+                        ? "bg-slate-900 text-white"
+                        : "bg-slate-100 text-slate-500 group-hover:bg-slate-200 group-hover:text-slate-900"
                       }`}
                   >
                     <Icon size={18} />
@@ -120,7 +120,7 @@ export default function UserMenu() {
       </div>
 
       {/* Logout */}
-      <div className="border-t border-gray-100 p-3">
+      <div className="border-t border-slate-100 p-3">
         <button
           onClick={logout}
           className="group flex w-full items-center gap-4 rounded-xl px-4 py-3 text-red-500 transition-all duration-300 hover:bg-red-50 hover:translate-x-1"

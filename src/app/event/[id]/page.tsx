@@ -81,6 +81,7 @@ export default function EventDetailPage() {
     const [openFaq, setOpenFaq] = useState<number | null>(null);
     const [organizer, setOrganizer] = useState<OrganizerData | null>(null);
     const [reserving, setReserving] = useState(false);
+    const [following, setFollowing] = useState(false);
 
     useEffect(() => {
         if (!id) return;
@@ -105,10 +106,34 @@ export default function EventDetailPage() {
             .catch(() => {});
     }, [event?.createdBy]);
 
+    useEffect(() => {
+        if (!user || !event?.createdBy || user.id === event.createdBy) return;
+        fetch(`${API_URL}/follows/check/${event.createdBy}`, { credentials: "include" })
+            .then((res) => res.json())
+            .then((data) => setFollowing(data.following))
+            .catch(() => {});
+    }, [user, event?.createdBy]);
+
+    const handleFollow = async () => {
+        if (!user || !event?.createdBy) return;
+        try {
+            const res = await fetch(`${API_URL}/follows/toggle`, {
+                method: "POST",
+                credentials: "include",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ userId: event.createdBy }),
+            });
+            const data = await res.json();
+            if (res.ok) {
+                setFollowing(data.following);
+            }
+        } catch {}
+    };
+
     if (loading) {
         return (
             <div className="min-h-[60vh] flex items-center justify-center">
-                <Loader2 size={32} className="animate-spin text-orange-500" />
+                <Loader2 size={32} className="animate-spin text-slate-900" />
             </div>
         );
     }
@@ -118,7 +143,7 @@ export default function EventDetailPage() {
             <div className="min-h-[60vh] flex flex-col items-center justify-center text-center px-4">
                 <h2 className="text-2xl font-bold text-gray-900">Event not found</h2>
                 <p className="mt-2 text-gray-500">{error || "This event may have been removed."}</p>
-                <Link href="/find-events" className="mt-4 rounded-xl bg-orange-600 px-6 py-3 text-sm font-bold text-white hover:bg-orange-700 transition">
+                <Link href="/find-events" className="mt-4 rounded-xl bg-slate-900 px-6 py-3 text-sm font-bold text-white hover:bg-blue-900 transition">
                     Browse Events
                 </Link>
             </div>
@@ -145,20 +170,34 @@ export default function EventDetailPage() {
     };
 
     const handleReserve = async () => {
-        if (!event.price || event.price <= 0) return;
         setReserving(true);
         try {
-            const res = await fetch(`${API_URL}/payments/checkout`, {
-                method: "POST",
-                credentials: "include",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ eventId: id, quantity: 1 }),
-            });
-            const data = await res.json();
-            if (res.ok && data.url) {
-                window.location.href = data.url;
+            if (!event.price || event.price <= 0) {
+                const res = await fetch(`${API_URL}/payments/reserve-free`, {
+                    method: "POST",
+                    credentials: "include",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ eventId: id, quantity: 1 }),
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    window.location.href = `/payment/success?reserved=true&event_id=${id}`;
+                } else {
+                    alert(data.message || "Failed to reserve spot");
+                }
             } else {
-                alert(data.message || "Failed to start checkout");
+                const res = await fetch(`${API_URL}/payments/checkout`, {
+                    method: "POST",
+                    credentials: "include",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ eventId: id, quantity: 1 }),
+                });
+                const data = await res.json();
+                if (res.ok && data.url) {
+                    window.location.href = data.url;
+                } else {
+                    alert(data.message || "Failed to start checkout");
+                }
             }
         } catch {
             alert("Something went wrong. Please try again.");
@@ -398,7 +437,7 @@ export default function EventDetailPage() {
                             <h2 className="text-2xl font-extrabold tracking-tight text-gray-900">Organized by</h2>
                             <div className="bg-gradient-to-br from-gray-50 to-white border border-gray-200 rounded-2xl p-6 sm:p-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
                                 <div className="flex items-center gap-4">
-                                    <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-red-500 text-white rounded-2xl flex items-center justify-center font-bold text-xl shadow-lg shadow-orange-500/20">
+                                    <div className="w-16 h-16 bg-gradient-to-br from-slate-900 to-blue-900 text-white rounded-2xl flex items-center justify-center font-bold text-xl shadow-lg shadow-slate-900/20">
                                         {(organizer?.name || event.createdByName || "O")
                                             .split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2)}
                                     </div>
@@ -414,10 +453,19 @@ export default function EventDetailPage() {
                                     </div>
                                 </div>
                                 <div className="flex gap-3 w-full sm:w-auto">
-                                    <button className="flex-1 sm:flex-none border border-gray-300 font-semibold text-gray-800 bg-white px-6 py-2.5 rounded-xl hover:bg-gray-100 transition inline-flex items-center justify-center gap-2 text-sm">
-                                        <Users size={16} /> Follow
-                                    </button>
-                                    <button className="flex-1 sm:flex-none bg-orange-600 font-semibold text-white px-6 py-2.5 rounded-xl hover:bg-orange-700 transition inline-flex items-center justify-center gap-2 text-sm shadow-lg shadow-orange-600/20">
+                                    {user && user.id !== event.createdBy && (
+                                        <button
+                                            onClick={handleFollow}
+                                            className={`flex-1 sm:flex-none font-semibold px-6 py-2.5 rounded-xl transition inline-flex items-center justify-center gap-2 text-sm ${
+                                                following
+                                                    ? "bg-slate-900 text-white hover:bg-slate-800"
+                                                    : "border border-gray-300 text-gray-800 bg-white hover:bg-gray-100"
+                                            }`}
+                                        >
+                                            <Users size={16} /> {following ? "Following" : "Follow"}
+                                        </button>
+                                    )}
+                                    <button className="flex-1 sm:flex-none bg-slate-900 font-semibold text-white px-6 py-2.5 rounded-xl hover:bg-blue-900 transition inline-flex items-center justify-center gap-2 text-sm shadow-lg shadow-slate-900/20">
                                         <ExternalLink size={16} /> Contact
                                     </button>
                                 </div>
@@ -445,7 +493,7 @@ export default function EventDetailPage() {
                     {/* Right Sticky Sidebar */}
                     <div className="w-full lg:w-1/3 lg:sticky lg:top-8 z-10 p-4 sm:p-8 lg:py-12 lg:pl-0">
                         <div className="border border-gray-200 rounded-3xl p-6 sm:p-8 shadow-xl shadow-gray-200/40 space-y-6 bg-white relative overflow-hidden">
-                            <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-orange-500 to-red-500" />
+                            <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-slate-900 to-blue-900" />
 
                             {/* Event Image */}
                             {bannerUrl && (
@@ -499,7 +547,7 @@ export default function EventDetailPage() {
                                 <button
                                     onClick={handleReserve}
                                     disabled={reserving}
-                                    className="w-full bg-orange-600 text-white font-bold py-4 px-4 rounded-xl hover:bg-orange-700 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 text-center text-lg shadow-lg shadow-orange-600/25 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                                    className="w-full bg-slate-900 text-white font-bold py-4 px-4 rounded-xl hover:bg-blue-900 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 text-center text-lg shadow-lg shadow-slate-900/25 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                                 >
                                     {reserving ? (
                                         <>

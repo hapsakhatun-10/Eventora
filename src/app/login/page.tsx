@@ -38,26 +38,26 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 py-12">
+        <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4 py-12">
             <div className="w-full max-w-md">
                 <div className="text-center mb-8">
                     <Link href="/" className="inline-flex items-center gap-2 mb-4">
-                        <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-orange-500 via-orange-600 to-red-500 text-white shadow-md">
+                        <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-slate-900 to-blue-900 text-white shadow-md">
                             <Ticket className="h-5 w-5" />
                         </div>
                         <h1 className="text-2xl font-extrabold tracking-tight">
                             <span className="text-slate-900">Even</span>
-                            <span className="text-orange-600">to</span>
+                            <span className="text-slate-500">to</span>
                         </h1>
                     </Link>
-                    <h2 className="text-2xl font-bold text-gray-900">Welcome back</h2>
-                    <p className="text-sm text-gray-500 mt-1">Sign in to your Eventora account</p>
+                    <h2 className="text-2xl font-bold text-slate-900">Welcome back</h2>
+                    <p className="text-sm text-slate-500 mt-1">Sign in to your Eventora account</p>
                 </div>
 
-                <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 sm:p-8">
+                <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-8">
                     <a
                         href={`${API_URL}/auth/google`}
-                        className="w-full rounded-xl border border-gray-300 px-6 py-3 text-sm font-bold text-gray-700 hover:bg-gray-50 transition-all duration-200 hover:shadow-lg active:scale-[0.98] flex items-center justify-center gap-3"
+                        className="w-full rounded-xl border border-slate-300 px-6 py-3 text-sm font-bold text-slate-700 hover:bg-slate-50 transition-all duration-200 hover:shadow-lg active:scale-[0.98] flex items-center justify-center gap-3"
                     >
                         <svg className="h-5 w-5" viewBox="0 0 24 24">
                             <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4" />
@@ -70,10 +70,10 @@ export default function LoginPage() {
 
                     <div className="relative my-6">
                         <div className="absolute inset-0 flex items-center">
-                            <div className="w-full border-t border-gray-200" />
+                            <div className="w-full border-t border-slate-200" />
                         </div>
                         <div className="relative flex justify-center text-sm">
-                            <span className="bg-white px-3 text-gray-400">or sign in with email</span>
+                            <span className="bg-white px-3 text-slate-400">or sign in with email</span>
                         </div>
                     </div>
 
@@ -85,7 +85,7 @@ export default function LoginPage() {
                         )}
 
                         <div>
-                            <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-1.5">
+                            <label htmlFor="email" className="block text-sm font-semibold text-slate-700 mb-1.5">
                                 Email
                             </label>
                             <input
@@ -94,12 +94,12 @@ export default function LoginPage() {
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 placeholder="you@example.com"
-                                className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-100 transition-all"
+                                className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm outline-none focus:border-slate-900 focus:ring-4 focus:ring-slate-900/10 transition-all"
                             />
                         </div>
 
                         <div>
-                            <label htmlFor="password" className="block text-sm font-semibold text-gray-700 mb-1.5">
+                            <label htmlFor="password" className="block text-sm font-semibold text-slate-700 mb-1.5">
                                 Password
                             </label>
                             <div className="relative">
@@ -109,12 +109,12 @@ export default function LoginPage() {
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     placeholder="Enter your password"
-                                    className="w-full rounded-xl border border-gray-300 px-4 py-3 pr-11 text-sm outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-100 transition-all"
+                                    className="w-full rounded-xl border border-slate-300 px-4 py-3 pr-11 text-sm outline-none focus:border-slate-900 focus:ring-4 focus:ring-slate-900/10 transition-all"
                                 />
                                 <button
                                     type="button"
                                     onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
                                 >
                                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                                 </button>
@@ -124,7 +124,7 @@ export default function LoginPage() {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full rounded-xl bg-orange-600 px-6 py-3 text-sm font-bold text-white hover:bg-orange-700 transition-all duration-200 hover:shadow-lg active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                            className="w-full rounded-xl bg-slate-900 px-6 py-3 text-sm font-bold text-white hover:bg-blue-900 transition-all duration-200 hover:shadow-lg active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                         >
                             {loading ? <Loader2 size={18} className="animate-spin" /> : null}
                             {loading ? "Signing in..." : "Sign In"}
@@ -132,9 +132,9 @@ export default function LoginPage() {
                     </form>
                 </div>
 
-                <p className="text-center text-sm text-gray-500 mt-6">
+                <p className="text-center text-sm text-slate-500 mt-6">
                     Don&apos;t have an account?{" "}
-                    <Link href="/register" className="font-semibold text-orange-600 hover:text-orange-700 transition-colors">
+                    <Link href="/register" className="font-semibold text-slate-900 hover:text-blue-900 transition-colors">
                         Create one
                     </Link>
                 </p>
