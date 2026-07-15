@@ -74,7 +74,7 @@ export default function EventDetailPage() {
     const [liked, setLiked] = useState(() => {
         if (typeof window === "undefined") return false;
         try {
-            const stored = localStorage.getItem("eventora_favorites");
+            const stored = localStorage.getItem("evento_favorites");
             return stored ? JSON.parse(stored).includes(id) : false;
         } catch { return false; }
     });
@@ -132,7 +132,7 @@ export default function EventDetailPage() {
         const next = !liked;
         setLiked(next);
         try {
-            const stored = localStorage.getItem("eventora_favorites");
+            const stored = localStorage.getItem("evento_favorites");
             const favorites: string[] = stored ? JSON.parse(stored) : [];
             if (next) {
                 if (!favorites.includes(id)) favorites.push(id);
@@ -140,7 +140,7 @@ export default function EventDetailPage() {
                 const idx = favorites.indexOf(id);
                 if (idx !== -1) favorites.splice(idx, 1);
             }
-            localStorage.setItem("eventora_favorites", JSON.stringify(favorites));
+            localStorage.setItem("evento_favorites", JSON.stringify(favorites));
         } catch {}
     };
 

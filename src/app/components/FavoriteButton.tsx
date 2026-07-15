@@ -10,7 +10,7 @@ interface FavoriteButtonProps {
 function getInitialFavorite(eventId: string): boolean {
     if (typeof window === "undefined") return false;
     try {
-        const stored = localStorage.getItem("eventora_favorites");
+        const stored = localStorage.getItem("evento_favorites");
         if (stored) return JSON.parse(stored).includes(eventId);
     } catch {}
     return false;
@@ -25,7 +25,7 @@ export default function FavoriteButton({ eventId }: FavoriteButtonProps) {
         setIsFavorite(next);
 
         try {
-            const stored = localStorage.getItem("eventora_favorites");
+            const stored = localStorage.getItem("evento_favorites");
             const favorites: string[] = stored ? JSON.parse(stored) : [];
             if (next) {
                 if (!favorites.includes(eventId)) favorites.push(eventId);
@@ -33,7 +33,7 @@ export default function FavoriteButton({ eventId }: FavoriteButtonProps) {
                 const idx = favorites.indexOf(eventId);
                 if (idx !== -1) favorites.splice(idx, 1);
             }
-            localStorage.setItem("eventora_favorites", JSON.stringify(favorites));
+            localStorage.setItem("evento_favorites", JSON.stringify(favorites));
         } catch {}
     };
 

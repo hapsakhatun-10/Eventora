@@ -32,7 +32,7 @@ interface Event {
 function getFavoriteIds(): string[] {
     if (typeof window === "undefined") return [];
     try {
-        const stored = localStorage.getItem("eventora_favorites");
+        const stored = localStorage.getItem("evento_favorites");
         return stored ? JSON.parse(stored) : [];
     } catch {
         return [];
@@ -41,10 +41,10 @@ function getFavoriteIds(): string[] {
 
 function removeFavorite(eventId: string) {
     try {
-        const stored = localStorage.getItem("eventora_favorites");
+        const stored = localStorage.getItem("evento_favorites");
         const favorites: string[] = stored ? JSON.parse(stored) : [];
         const updated = favorites.filter((id) => id !== eventId);
-        localStorage.setItem("eventora_favorites", JSON.stringify(updated));
+        localStorage.setItem("evento_favorites", JSON.stringify(updated));
     } catch {}
 }
 

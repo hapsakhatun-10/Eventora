@@ -7,6 +7,8 @@ import {
     Clock,
     SlidersHorizontal,
     X,
+    ChevronLeft,
+    ChevronRight,
 } from "lucide-react";
 import Link from "next/link";
 import MapSection from "../components/MapSection";
@@ -42,25 +44,27 @@ export default function EventDiscoveryPage() {
     const [locationStatus, setLocationStatus] = useState<"idle" | "loading" | "error">("idle");
     const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
     const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
 
-    const fetchEvents = useCallback((categories: string[]) => {
-        const params = new URLSearchParams({ limit: "50" });
+    const fetchEvents = useCallback((categories: string[], pageNum: number) => {
+        const params = new URLSearchParams({ limit: "5", page: String(pageNum) });
         if (categories.length > 0) params.set("categories", categories.join(","));
         fetch(`${API_URL}/events?${params}`)
             .then((res) => res.json())
-            .then((data) => { setEvents(data.events || []); setLoading(false); setError(""); })
+            .then((data) => { setEvents(data.events || []); setTotalPages(data.totalPages || 1); setLoading(false); setError(""); })
             .catch(() => { setError("Failed to load events"); setLoading(false); });
     }, []);
 
     useEffect(() => {
-        fetchEvents([]);
-    }, [fetchEvents]);
+        fetchEvents(selectedCategories, page);
+    }, [fetchEvents, selectedCategories, page]);
 
     const handleCategoryChange = useCallback((cats: string[]) => {
         setSelectedCategories(cats);
+        setPage(1);
         setLoading(true);
-        fetchEvents(cats);
-    }, [fetchEvents]);
+    }, []);
 
     const fetchLocation = useCallback(() => {
         if (!navigator.geolocation) return setLocationStatus("error");
@@ -125,7 +129,7 @@ export default function EventDiscoveryPage() {
                 ) : error ? (
                     <div className="text-center py-16">
                         <p className="text-red-500 text-lg font-medium">{error}</p>
-                        <button onClick={() => fetchEvents(selectedCategories)} className="mt-3 text-sm font-semibold text-orange-600 hover:underline">Retry</button>
+                        <button onClick={() => fetchEvents(selectedCategories, page)} className="mt-3 text-sm font-semibold text-orange-600 hover:underline">Retry</button>
                     </div>
                 ) : events.length === 0 ? (
                     <div className="text-center py-16">
@@ -195,6 +199,29 @@ export default function EventDiscoveryPage() {
                             </Link>
                         );
                     })
+                )}
+                {totalPages > 1 && (
+                    <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                        <button
+                            onClick={() => setPage((p) => Math.max(1, p - 1))}
+                            disabled={page === 1}
+                            className="flex items-center gap-1.5 rounded-xl border border-gray-300 px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                        >
+                            <ChevronLeft size={16} />
+                            Previous
+                        </button>
+                        <span className="text-sm font-medium text-gray-500">
+                            Page {page} of {totalPages}
+                        </span>
+                        <button
+                            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                            disabled={page === totalPages}
+                            className="flex items-center gap-1.5 rounded-xl border border-gray-300 px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                        >
+                            Next
+                            <ChevronRight size={16} />
+                        </button>
+                    </div>
                 )}
             </main>
 
