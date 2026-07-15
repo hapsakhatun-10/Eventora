@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { LayoutDashboard, Plus, Ticket, Calendar, Loader2 } from "lucide-react";
+import { LayoutDashboard, Plus, Ticket, Calendar, Loader2, FolderKanban, Heart } from "lucide-react";
 import UserMenu from "../components/UserMenu";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
@@ -45,13 +45,10 @@ export default function DashboardPage() {
 
     useEffect(() => {
         if (!user) return;
-        fetch(`${API_URL}/events`, { credentials: "include" })
+        fetch(`${API_URL}/events/my`, { credentials: "include" })
             .then((res) => res.json())
-            .then((data) => {
-                const mine = data.filter((e: Event) => e.createdBy === user.id);
-                setMyEvents(mine);
-            })
-            .catch(() => {})
+            .then((data) => setMyEvents(data.events || []))
+            .catch(() => setMyEvents([]))
             .finally(() => setEventsLoading(false));
     }, [user]);
 
@@ -129,12 +126,40 @@ export default function DashboardPage() {
                     </div>
                 </div>
 
+                {/* Quick Links */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+                    <Link
+                        href="/dashboard/manage"
+                        className="flex items-center gap-4 rounded-2xl border border-gray-200 bg-white p-5 hover:border-orange-200 hover:bg-orange-50 transition-all group"
+                    >
+                        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-orange-100 text-orange-600 group-hover:bg-orange-200 transition-colors">
+                            <FolderKanban size={22} />
+                        </div>
+                        <div>
+                            <p className="font-bold text-gray-900 group-hover:text-orange-600 transition-colors">Manage Events</p>
+                            <p className="text-xs text-gray-500 mt-0.5">Edit and delete your events</p>
+                        </div>
+                    </Link>
+                    <Link
+                        href="/dashboard/liked"
+                        className="flex items-center gap-4 rounded-2xl border border-gray-200 bg-white p-5 hover:border-red-200 hover:bg-red-50 transition-all group"
+                    >
+                        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-red-100 text-red-600 group-hover:bg-red-200 transition-colors">
+                            <Heart size={22} />
+                        </div>
+                        <div>
+                            <p className="font-bold text-gray-900 group-hover:text-red-600 transition-colors">Liked Events</p>
+                            <p className="text-xs text-gray-500 mt-0.5">Your favourite events</p>
+                        </div>
+                    </Link>
+                </div>
+
                 {/* My Events */}
                 <div className="rounded-2xl border border-gray-200 bg-white">
                     <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
                         <h2 className="text-lg font-bold text-gray-900">My Events</h2>
-                        <Link href="/create-event" className="text-sm font-semibold text-orange-600 hover:text-orange-700 transition-colors">
-                            + New Event
+                        <Link href="/dashboard/manage" className="text-sm font-semibold text-orange-600 hover:text-orange-700 transition-colors">
+                            Manage All
                         </Link>
                     </div>
                     <div className="p-6">
@@ -157,7 +182,7 @@ export default function DashboardPage() {
                     ) : (
                             <div className="space-y-3">
                                 {myEvents.map((event) => {
-                                    const bannerUrl = event.banner ? `${API_URL}/uploads/${event.banner}` : null;
+                                    const bannerUrl = event.banner || null;
                                     return (
                                         <Link
                                             key={event._id}
@@ -166,7 +191,7 @@ export default function DashboardPage() {
                                         >
                                             <div className="h-14 w-14 flex-shrink-0 rounded-xl bg-gray-100 overflow-hidden">
                                                 {bannerUrl ? (
-                                                    <img src={bannerUrl} alt={event.title} className="h-full w-full object-cover" />
+                                                    <img src={bannerUrl} alt={event.title} loading="lazy" decoding="async" className="h-full w-full object-cover" />
                                                 ) : (
                                                     <div className="h-full w-full bg-linear-to-br from-orange-500 to-red-500 flex items-center justify-center text-white text-xs font-bold">
                                                         {event.category || "Event"}

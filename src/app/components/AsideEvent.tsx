@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { Calendar, MapPin, ChevronDown, ChevronUp } from 'lucide-react';
 
 interface AsideEventProps {
@@ -39,9 +39,18 @@ const AsideEvent = ({
     const [mobileExpanded, setMobileExpanded] = useState(false);
 
     const bannerUrl = useMemo(() => {
-        if (banner) return URL.createObjectURL(banner);
+        if (banner) {
+            const url = URL.createObjectURL(banner);
+            return url;
+        }
         return null;
     }, [banner]);
+
+    useEffect(() => {
+        return () => {
+            if (bannerUrl) URL.revokeObjectURL(bannerUrl);
+        };
+    }, [bannerUrl]);
 
     const today = new Date();
     const todayFormatted = today.toLocaleDateString("en-US", {

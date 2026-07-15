@@ -13,6 +13,7 @@ interface User {
 interface AuthContextType {
     user: User | null;
     loading: boolean;
+    authChecked: boolean;
     login: (email: string, password: string) => Promise<string | null>;
     register: (name: string, email: string, password: string) => Promise<string | null>;
     logout: () => Promise<void>;
@@ -23,8 +24,10 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
+    const [authChecked, setAuthChecked] = useState(false);
 
     const checkAuth = useCallback(async () => {
+        setLoading(true);
         try {
             const res = await fetch(`${API_URL}/auth/me`, { credentials: "include" });
             if (res.ok) {
@@ -37,10 +40,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             setUser(null);
         } finally {
             setLoading(false);
+            setAuthChecked(true);
         }
     }, []);
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- initial auth check syncs external auth state
         checkAuth();
     }, [checkAuth]);
 
@@ -79,18 +84,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
 
     const logout = async () => {
+        console.log("Logout clicked");
         try {
-            await fetch(`${API_URL}/auth/logout`, {
+            const res = await fetch(`${API_URL}/auth/logout`, {
                 method: "POST",
                 credentials: "include",
             });
+            console.log("Logout response:", res.status, await res.json());
+        } catch (err) {
+            console.error("Logout error:", err);
         } finally {
+            console.log("Redirecting to home...");
             setUser(null);
+            window.location.href = "/";
         }
     };
 
     return (
-        <AuthContext.Provider value={{ user, loading, login, register, logout }}>
+        <AuthContext.Provider value={{ user, loading, authChecked, login, register, logout }}>
             {children}
         </AuthContext.Provider>
     );

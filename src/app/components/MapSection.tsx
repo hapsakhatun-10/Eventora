@@ -28,7 +28,7 @@ export default function MapSection({
 }: MapSectionProps) {
     return (
         <section
-            className={`hidden lg:block lg:col-span-5 h-[calc(100vh-140px)] rounded-2xl overflow-hidden border border-gray-200 bg-gray-100 shadow-sm relative ${className}`}
+            className={`hidden lg:block lg:col-span-4 h-[calc(100vh-140px)] rounded-2xl overflow-hidden border border-gray-200 bg-gray-100 shadow-sm relative ${className}`}
         >
             {/* Top Bar */}
             <div className="absolute top-0 left-0 right-0 z-20 bg-white/95 backdrop-blur-sm border-b border-gray-200 px-4 py-3">
@@ -65,8 +65,8 @@ export default function MapSection({
                 <div
                     className="absolute inset-0 opacity-[0.08]"
                     style={{
-                        backgroundImage:
-                            "linear-linear(#64748b 1px, transparent 1px), linear-linear(90deg, #64748b 1px, transparent 1px)",
+                            backgroundImage:
+                            "linear-gradient(#64748b 1px, transparent 1px), linear-gradient(90deg, #64748b 1px, transparent 1px)",
                         backgroundSize: "40px 40px",
                     }}
                 />

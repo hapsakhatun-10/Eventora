@@ -16,15 +16,19 @@ import {
     Plus,
     Lightbulb,
     User,
+    Loader2,
 } from "lucide-react";
 import AsideEvent from "../components/AsideEvent";
 import { useAuth } from "../components/AuthContext";
+import { useToast } from "../components/Toast";
+import { compressImage } from "../utils/compressImage";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
 export default function CreateEventPage() {
-    const { user, loading } = useAuth();
+    const { user, authChecked } = useAuth();
     const router = useRouter();
+    const { showToast } = useToast();
     const [title, setTitle] = useState("");
     const [category, setCategory] = useState("");
     const [shortDescription, setShortDescription] = useState("");
@@ -45,12 +49,15 @@ export default function CreateEventPage() {
     );
     const [reservedSeating, setReservedSeating] = useState(false);
     const [activeStep, setActiveStep] = useState(1);
+    const [submitting, setSubmitting] = useState(false);
+    const [compressing, setCompressing] = useState(false);
+    const [errors, setErrors] = useState<string[]>([]);
 
     useEffect(() => {
-        if (!loading && !user) {
+        if (authChecked && !user) {
             router.push("/login");
         }
-    }, [user, loading, router]);
+    }, [user, authChecked, router]);
 
     const scrollTo = (step: number, id: string) => {
         setActiveStep(step);
@@ -59,21 +66,28 @@ export default function CreateEventPage() {
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
+        setErrors([]);
 
-        if (!title.trim()) return alert("Event title is required");
-        if (!category) return alert("Please select a category");
-        if (!date) return alert("Date is required");
-        if (!startTime) return alert("Start time is required");
-        if (!endTime) return alert("End time is required");
+        const newErrors: string[] = [];
+        if (!title.trim()) newErrors.push("Event title is required");
+        if (!category) newErrors.push("Please select a category");
+        if (!date) newErrors.push("Date is required");
+        if (!startTime) newErrors.push("Start time is required");
+        if (!endTime) newErrors.push("End time is required");
         if (locationTab === "venue" && (!venue.trim() || !city.trim())) {
-            return alert("Venue and city are required for in-person events");
+            newErrors.push("Venue and city are required for in-person events");
         }
         if (locationTab === "online" && !onlineUrl.trim()) {
-            return alert("Online event link is required");
+            newErrors.push("Online event link is required");
         }
-        if (!price) return alert("Price is required");
+        if (!price) newErrors.push("Price is required");
         if (!totalSeats || Number(totalSeats) < 1) {
-            return alert("Total seats must be at least 1");
+            newErrors.push("Total seats must be at least 1");
+        }
+
+        if (newErrors.length > 0) {
+            setErrors(newErrors);
+            return;
         }
 
         const formData = new FormData();
@@ -95,26 +109,30 @@ export default function CreateEventPage() {
         formData.append("reservedSeating", String(reservedSeating));
         if (banner) formData.append("banner", banner);
 
+        setSubmitting(true);
         try {
             const res = await fetch(`${API_URL}/events`, {
                 method: "POST",
+                credentials: "include",
                 body: formData,
             });
 
-            const data = await res.json();
-
             if (res.ok) {
-                alert("Event created successfully!");
+                showToast("Event created successfully!", "success");
+                setTimeout(() => router.push("/dashboard/manage"), 800);
             } else {
-                alert(data.message || "Failed to create event");
+                const data = await res.json();
+                showToast(data.message || "Failed to create event", "error");
             }
         } catch (error) {
             console.error(error);
-            alert("Something went wrong!");
+            showToast("Something went wrong!", "error");
+        } finally {
+            setSubmitting(false);
         }
     };
 
-    if (loading || !user) {
+    if (!authChecked || !user) {
         return (
             <div className="min-h-screen flex items-center justify-center">
                 <div className="h-8 w-8 animate-spin rounded-full border-4 border-orange-500 border-t-transparent" />
@@ -158,6 +176,21 @@ export default function CreateEventPage() {
 
                     {/* Body */}
                     <div className="p-4 sm:p-6 md:p-8 space-y-6 sm:space-y-8">
+                        {/* Validation Errors */}
+                        {errors.length > 0 && (
+                            <div className="rounded-xl border border-red-200 bg-red-50 p-4">
+                                <p className="text-sm font-bold text-red-700 mb-2">Please fix the following:</p>
+                                <ul className="space-y-1">
+                                    {errors.map((err, i) => (
+                                        <li key={i} className="text-sm text-red-600 flex items-center gap-2">
+                                            <span className="w-1.5 h-1.5 rounded-full bg-red-400 shrink-0" />
+                                            {err}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
+
                         {/* Section 1: Basic Information */}
                         <div id="section-basic" className="space-y-8">
                             {/* Banner */}
@@ -166,20 +199,55 @@ export default function CreateEventPage() {
                                     Event Banner
                                 </label>
                                 <label className="flex h-48 sm:h-60 md:h-72 cursor-pointer items-center justify-center rounded-2xl border-2 border-dashed border-gray-300 bg-gray-50 transition-all hover:border-blue-500 hover:bg-blue-50">
-                                    <div className="text-center px-4">
-                                        <ImagePlus className="mx-auto h-10 w-10 sm:h-14 sm:w-14 text-gray-400" />
-                                        <h3 className="mt-3 sm:mt-4 text-base sm:text-lg font-semibold text-gray-700">
-                                            Upload Event Banner
-                                        </h3>
-                                        <p className="mt-1 sm:mt-2 text-xs sm:text-sm text-gray-500">
-                                            PNG, JPG • Max 5MB
-                                        </p>
-                                    </div>
+                                    {compressing ? (
+                                        <div className="text-center px-4">
+                                            <Loader2 className="mx-auto h-10 w-10 sm:h-12 sm:w-12 text-blue-500 animate-spin" />
+                                            <p className="mt-3 text-sm font-semibold text-gray-600">Compressing image...</p>
+                                            <p className="mt-1 text-xs text-gray-400">Optimizing for upload</p>
+                                        </div>
+                                    ) : banner ? (
+                                        <div className="relative w-full h-full">
+                                            <img
+                                                src={URL.createObjectURL(banner)}
+                                                alt="Banner preview"
+                                                className="w-full h-full object-cover rounded-2xl"
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={(e) => { e.preventDefault(); setBanner(null); }}
+                                                className="absolute top-3 right-3 px-3 py-1.5 bg-black/60 text-white text-xs font-bold rounded-lg hover:bg-black/80 transition-colors"
+                                            >
+                                                Remove
+                                            </button>
+                                        </div>
+                                    ) : (
+                                        <div className="text-center px-4">
+                                            <ImagePlus className="mx-auto h-10 w-10 sm:h-14 sm:w-14 text-gray-400" />
+                                            <h3 className="mt-3 sm:mt-4 text-base sm:text-lg font-semibold text-gray-700">
+                                                Upload Event Banner
+                                            </h3>
+                                            <p className="mt-1 sm:mt-2 text-xs sm:text-sm text-gray-500">
+                                                PNG, JPG • Max 5MB
+                                            </p>
+                                        </div>
+                                    )}
                                     <input
                                         type="file"
                                         className="hidden"
                                         accept="image/png,image/jpeg"
-                                        onChange={(e) => setBanner(e.target.files?.[0] || null)}
+                                        onChange={async (e) => {
+                                            const file = e.target.files?.[0];
+                                            if (!file) return;
+                                            setCompressing(true);
+                                            try {
+                                                const compressed = await compressImage(file);
+                                                setBanner(compressed);
+                                            } catch {
+                                                setBanner(file);
+                                            } finally {
+                                                setCompressing(false);
+                                            }
+                                        }}
                                     />
                                 </label>
                             </div>
@@ -648,10 +716,9 @@ export default function CreateEventPage() {
                             </button>
                         </section>
 
-                        {/* 2. GOOD TO KNOW CARD (ACTIVE / SELECTED BORDER) */}
+                        {/* 2. GOOD TO KNOW CARD */}
                         <section className="bg-white rounded-xl border-2 border-blue-500 p-4 sm:p-6 flex justify-between items-start shadow-xs gap-3">
                             <div className="space-y-4 sm:space-y-6 w-full min-w-0">
-
                                 <div className="space-y-1">
                                     <h2 className="text-lg sm:text-xl font-extrabold text-[#1E0A3C] tracking-tight">Good to know</h2>
                                 </div>
@@ -672,26 +739,21 @@ export default function CreateEventPage() {
                                 {/* FAQ Sub-section */}
                                 <div className="space-y-3">
                                     <h3 className="text-sm font-bold text-gray-800">Frequently asked questions</h3>
-
-                                    {/* Context Insights Message Banner */}
                                     <div className="flex items-center gap-2 text-xs font-medium text-gray-700">
                                         <Lightbulb className="w-4 h-4 text-yellow-500 fill-yellow-400 shrink-0" />
                                         <span>Events with FAQs have 8% more organic traffic</span>
                                     </div>
-
                                     <button type="button" className="text-xs font-bold text-blue-600 hover:text-blue-800 flex items-center gap-1 transition">
                                         + Add question
                                     </button>
                                 </div>
-
                             </div>
-
                             <button type="button" className="bg-[#F8F9FA] hover:bg-gray-100 text-blue-600 p-2 rounded-full transition shadow-2xs">
                                 <Plus className="w-4 h-4 stroke-[3]" />
                             </button>
                         </section>
 
-                        {/* 3. DYNAMIC ADD EXTRA SECTIONS CONTAINER */}
+                        {/* 3. DYNAMIC ADD EXTRA SECTIONS */}
                         <section className="bg-white rounded-xl border border-dashed border-gray-300 p-4 sm:p-6 space-y-4">
                             <div className="space-y-2">
                                 <h2 className="text-lg sm:text-xl font-extrabold text-[#1E0A3C] tracking-tight">
@@ -702,7 +764,6 @@ export default function CreateEventPage() {
                                 </p>
                             </div>
 
-                            {/* Action Row - Add Lineup Feature */}
                             <div className="pt-4 border-t border-gray-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                                 <div className="flex items-center gap-3 sm:gap-4">
                                     <div className="w-9 h-9 sm:w-10 sm:h-10 bg-gray-50 rounded-lg flex items-center justify-center text-gray-700 border border-gray-100 shadow-2xs shrink-0">
@@ -715,7 +776,6 @@ export default function CreateEventPage() {
                                         </span>
                                     </div>
                                 </div>
-
                                 <div className="flex items-center gap-3 sm:gap-4 ml-12 sm:ml-0">
                                     <button type="button" className="text-xs font-bold text-blue-600 hover:underline">
                                         See examples
@@ -731,9 +791,17 @@ export default function CreateEventPage() {
                         <div className="flex justify-end pt-4">
                             <button
                                 type="submit"
-                                className="rounded-xl bg-blue-600 px-8 py-3 text-sm font-bold text-white transition-colors hover:bg-blue-700 active:bg-blue-800"
+                                disabled={submitting}
+                                className="rounded-xl bg-blue-600 px-8 py-3 text-sm font-bold text-white transition-colors hover:bg-blue-700 active:bg-blue-800 disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-2"
                             >
-                                Save & Continue
+                                {submitting ? (
+                                    <>
+                                        <Loader2 size={16} className="animate-spin" />
+                                        Creating...
+                                    </>
+                                ) : (
+                                    "Save & Continue"
+                                )}
                             </button>
                         </div>
                     </div>

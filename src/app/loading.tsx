@@ -27,7 +27,7 @@ export default function Loading() {
                 {/* Skeleton Content Preview */}
                 <div className="w-full max-w-md space-y-4 mt-4">
                     {/* Skeleton Banner */}
-                    <div className="h-40 bg-linear-to-r from-gray-200 via-gray-100 to-gray-200 rounded-2xl bg-[length:200%_100%] bg-[linear-linear(90deg,#f3f4f6_25%,#e5e7eb_50%,#f3f4f6_75%)] animate-shimmer" />
+                    <div className="h-40 bg-linear-to-r from-gray-200 via-gray-100 to-gray-200 rounded-2xl bg-[length:200%_100%] bg-[linear-gradient(90deg,#f3f4f6_25%,#e5e7eb_50%,#f3f4f6_75%)] animate-shimmer" />
 
                     {/* Skeleton Text Lines */}
                     <div className="space-y-3">
