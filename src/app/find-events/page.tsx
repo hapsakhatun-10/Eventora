@@ -17,6 +17,7 @@ import MapSection from "../components/MapSection";
 import Sidebar from "../components/Sidebar";
 import ShareButton from "../components/ShareButton";
 import FavoriteButton from "../components/FavoriteButton";
+import { authFetch } from "../utils/auth";
 
 const API_URL = "/api";
 
@@ -59,9 +60,8 @@ export default function EventDiscoveryPage() {
 
         window.history.replaceState({}, "", "/find-events");
 
-        fetch(`${API_URL}/payments/confirm`, {
+        authFetch("/payments/confirm", {
             method: "POST",
-            credentials: "include",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ sessionId }),
         }).catch(() => {});

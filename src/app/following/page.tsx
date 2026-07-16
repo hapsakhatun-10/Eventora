@@ -5,8 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { UserPlus, Loader2, Search } from "lucide-react";
 import UserMenu from "../components/UserMenu";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+import { authFetch } from "../utils/auth";
 
 interface FollowingUser {
     _id: string;
@@ -30,7 +29,7 @@ export default function FollowingPage() {
     const [unfollowing, setUnfollowing] = useState<string | null>(null);
 
     useEffect(() => {
-        fetch(`${API_URL}/auth/me`, { credentials: "include" })
+        authFetch("/auth/me")
             .then((res) => {
                 if (!res.ok) throw new Error("Not authenticated");
                 return res.json();
@@ -42,7 +41,7 @@ export default function FollowingPage() {
 
     useEffect(() => {
         if (!user) return;
-        fetch(`${API_URL}/follows/list`, { credentials: "include" })
+        authFetch("/follows/list")
             .then((res) => res.json())
             .then((data) => setFollowing(data.following || []))
             .catch(() => setFollowing([]))
@@ -52,9 +51,8 @@ export default function FollowingPage() {
     const handleUnfollow = async (userId: string) => {
         setUnfollowing(userId);
         try {
-            const res = await fetch(`${API_URL}/follows/toggle`, {
+            const res = await authFetch("/follows/toggle", {
                 method: "POST",
-                credentials: "include",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ userId }),
             });

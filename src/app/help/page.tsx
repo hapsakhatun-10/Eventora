@@ -12,7 +12,6 @@ import {
     ChevronDown,
     Mail,
     MessageCircle,
-    ExternalLink,
 } from "lucide-react";
 
 const faqData = [

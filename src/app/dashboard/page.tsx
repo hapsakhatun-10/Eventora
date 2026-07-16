@@ -6,8 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { LayoutDashboard, Plus, Ticket, Calendar, Loader2, FolderKanban, Heart } from "lucide-react";
 import UserMenu from "../components/UserMenu";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+import { authFetch } from "../utils/auth";
 
 interface User {
     id: string;
@@ -34,7 +33,7 @@ export default function DashboardPage() {
     const [eventsLoading, setEventsLoading] = useState(true);
 
     useEffect(() => {
-        fetch(`${API_URL}/auth/me`, { credentials: "include" })
+        authFetch("/auth/me")
             .then((res) => {
                 if (!res.ok) throw new Error("Not authenticated");
                 return res.json();
@@ -46,7 +45,7 @@ export default function DashboardPage() {
 
     useEffect(() => {
         if (!user) return;
-        fetch(`${API_URL}/events/my`, { credentials: "include" })
+        authFetch("/events/my")
             .then((res) => res.json())
             .then((data) => setMyEvents(data.events || []))
             .catch(() => setMyEvents([]))
@@ -180,7 +179,7 @@ export default function DashboardPage() {
                                     Create Your First Event
                                 </Link>
                             </div>
-                    ) : (
+                        ) : (
                             <div className="space-y-3">
                                 {myEvents.map((event) => {
                                     const bannerUrl = event.banner || null;

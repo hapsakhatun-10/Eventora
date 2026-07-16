@@ -1,8 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+import { getToken, setToken, removeToken, authFetch } from "../utils/auth";
 
 interface User {
     id: string;
@@ -28,15 +27,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const checkAuth = useCallback(async () => {
         setLoading(true);
+        if (!getToken()) {
+            setUser(null);
+            setLoading(false);
+            setAuthChecked(true);
+            return;
+        }
         try {
-            const res = await fetch(`${API_URL}/auth/me`, { credentials: "include" });
+            const res = await authFetch("/auth/me");
             if (res.ok) {
                 const data = await res.json();
                 setUser(data.user);
             } else {
+                removeToken();
                 setUser(null);
             }
         } catch {
+            removeToken();
             setUser(null);
         } finally {
             setLoading(false);
@@ -51,14 +58,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const login = async (email: string, password: string): Promise<string | null> => {
         try {
-            const res = await fetch(`${API_URL}/auth/login`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}/auth/login`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                credentials: "include",
                 body: JSON.stringify({ email, password }),
             });
             const data = await res.json();
             if (!res.ok) return data.message;
+            setToken(data.token);
             setUser(data.user);
             return null;
         } catch {
@@ -68,14 +75,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const register = async (name: string, email: string, password: string): Promise<string | null> => {
         try {
-            const res = await fetch(`${API_URL}/auth/register`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}/auth/register`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                credentials: "include",
                 body: JSON.stringify({ name, email, password }),
             });
             const data = await res.json();
             if (!res.ok) return data.message;
+            setToken(data.token);
             setUser(data.user);
             return null;
         } catch {
@@ -84,8 +91,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
 
     const logout = () => {
+        removeToken();
         setUser(null);
-        fetch(`${API_URL}/auth/logout`, { method: "POST", credentials: "include" }).catch(() => {});
         window.location.href = "/";
     };
 

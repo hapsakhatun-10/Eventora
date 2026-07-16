@@ -24,6 +24,7 @@ import {
 import Link from "next/link";
 import Image from "next/image";
 import { useAuth } from "../../components/AuthContext";
+import { authFetch } from "../../utils/auth";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
@@ -103,7 +104,7 @@ export default function EventDetailPage() {
 
     useEffect(() => {
         if (!user || !event?.createdBy || user.id === event.createdBy) return;
-        fetch(`${API_URL}/follows/check/${event.createdBy}`, { credentials: "include" })
+        authFetch(`/follows/check/${event.createdBy}`)
             .then((res) => res.json())
             .then((data) => setFollowing(data.following))
             .catch(() => {});
@@ -111,7 +112,7 @@ export default function EventDetailPage() {
 
     useEffect(() => {
         if (!user || !id) return;
-        fetch(`${API_URL}/favorites/check/${id}`, { credentials: "include" })
+        authFetch(`/favorites/check/${id}`)
             .then((res) => {
                 if (!res.ok) throw new Error();
                 return res.json();
@@ -123,9 +124,8 @@ export default function EventDetailPage() {
     const handleFollow = async () => {
         if (!user || !event?.createdBy) return;
         try {
-            const res = await fetch(`${API_URL}/follows/toggle`, {
+            const res = await authFetch("/follows/toggle", {
                 method: "POST",
-                credentials: "include",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ userId: event.createdBy }),
             });
@@ -163,9 +163,8 @@ export default function EventDetailPage() {
         const prev = liked;
         setLiked(!prev);
         try {
-            const res = await fetch(`${API_URL}/favorites/toggle`, {
+            const res = await authFetch("/favorites/toggle", {
                 method: "POST",
-                credentials: "include",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ eventId: id }),
             });
@@ -181,9 +180,8 @@ export default function EventDetailPage() {
         setReserving(true);
         try {
             if (!event.price || event.price <= 0) {
-                const res = await fetch(`${API_URL}/payments/reserve-free`, {
+                const res = await authFetch("/payments/reserve-free", {
                     method: "POST",
-                    credentials: "include",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ eventId: id, quantity: 1 }),
                 });
@@ -194,9 +192,8 @@ export default function EventDetailPage() {
                     alert(data.message || "Failed to reserve spot");
                 }
             } else {
-                const res = await fetch(`${API_URL}/payments/book`, {
+                const res = await authFetch("/payments/book", {
                     method: "POST",
-                    credentials: "include",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ eventId: id, quantity: 1 }),
                 });

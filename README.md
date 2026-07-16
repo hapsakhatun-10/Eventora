@@ -57,14 +57,6 @@ src/
 └── utils/
 ```
 
-## Available Scripts
-
-| Command       | Description                  |
-| ------------- | ---------------------------- |
-| npm run dev   | Runs the development server  |
-| npm run build | Creates a production build   |
-| npm run start | Starts the production server |
-| npm run lint  | Runs ESLint checks           |
 
 
 

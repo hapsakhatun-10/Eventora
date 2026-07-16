@@ -2,8 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Heart } from "lucide-react";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+import { authFetch } from "../utils/auth";
 
 interface FavoriteButtonProps {
     eventId: string;
@@ -14,7 +13,7 @@ export default function FavoriteButton({ eventId }: FavoriteButtonProps) {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch(`${API_URL}/favorites/check/${eventId}`, { credentials: "include" })
+        authFetch(`/favorites/check/${eventId}`)
             .then((res) => {
                 if (!res.ok) throw new Error("Not authenticated");
                 return res.json();
@@ -32,9 +31,8 @@ export default function FavoriteButton({ eventId }: FavoriteButtonProps) {
         setIsFavorite(!prev);
 
         try {
-            const res = await fetch(`${API_URL}/favorites/toggle`, {
+            const res = await authFetch("/favorites/toggle", {
                 method: "POST",
-                credentials: "include",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ eventId }),
             });

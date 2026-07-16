@@ -22,8 +22,7 @@ import AsideEvent from "../components/AsideEvent";
 import { useAuth } from "../components/AuthContext";
 import { useToast } from "../components/Toast";
 import { compressImage } from "../utils/compressImage";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+import { authFetch } from "../utils/auth";
 
 export default function CreateEventPage() {
     const { user, authChecked } = useAuth();
@@ -111,9 +110,8 @@ export default function CreateEventPage() {
 
         setSubmitting(true);
         try {
-            const res = await fetch(`${API_URL}/events`, {
+            const res = await authFetch("/events", {
                 method: "POST",
-                credentials: "include",
                 body: formData,
             });
 

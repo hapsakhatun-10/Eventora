@@ -13,8 +13,7 @@ import {
     CreditCard,
 } from "lucide-react";
 import UserMenu from "../components/UserMenu";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+import { authFetch } from "../utils/auth";
 
 interface EventData {
     _id: string;
@@ -60,7 +59,7 @@ export default function TicketsPage() {
     const confirmedSessionRef = useRef(false);
 
     const fetchTickets = useCallback(() => {
-        fetch(`${API_URL}/payments/my-tickets`, { credentials: "include" })
+        authFetch("/payments/my-tickets")
             .then((res) => res.json())
             .then((data) => setTickets(data.tickets || []))
             .catch(() => setTickets([]))
@@ -68,7 +67,7 @@ export default function TicketsPage() {
     }, []);
 
     useEffect(() => {
-        fetch(`${API_URL}/auth/me`, { credentials: "include" })
+        authFetch("/auth/me")
             .then((res) => {
                 if (!res.ok) throw new Error("Not authenticated");
                 return res.json();
@@ -85,9 +84,8 @@ export default function TicketsPage() {
 
         window.history.replaceState({}, "", "/tickets");
 
-        fetch(`${API_URL}/payments/confirm`, {
+        authFetch("/payments/confirm", {
             method: "POST",
-            credentials: "include",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ sessionId }),
         }).then(() => {
@@ -154,7 +152,7 @@ export default function TicketsPage() {
                                     <h2 className="text-lg font-bold text-amber-600 mb-4">Pending Payment</h2>
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         {pending.map((ticket) => (
-                                            <TicketCard key={ticket._id} ticket={ticket} onPaymentDone={fetchTickets} />
+                                            <TicketCard key={ticket._id} ticket={ticket} />
                                         ))}
                                     </div>
                                 </section>
@@ -189,8 +187,7 @@ export default function TicketsPage() {
     );
 }
 
-function TicketCard({ ticket, onPaymentDone }: { ticket: TicketItem; onPaymentDone?: () => void }) {
-    const router = useRouter();
+function TicketCard({ ticket }: { ticket: TicketItem }) {
     const [paying, setPaying] = useState(false);
     const event = ticket.event;
     const title = event?.title || "Event";
@@ -206,9 +203,8 @@ function TicketCard({ ticket, onPaymentDone }: { ticket: TicketItem; onPaymentDo
     const handlePayNow = async () => {
         setPaying(true);
         try {
-            const res = await fetch(`${API_URL}/payments/pay-pending`, {
+            const res = await authFetch("/payments/pay-pending", {
                 method: "POST",
-                credentials: "include",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ ticketId: ticket._id }),
             });

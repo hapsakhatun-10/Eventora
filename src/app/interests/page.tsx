@@ -21,7 +21,7 @@ import {
     Check,
 } from "lucide-react";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+import { authFetch } from "../utils/auth";
 
 const categories = [
     { id: "business", label: "Business", icon: Briefcase },
@@ -54,11 +54,11 @@ export default function ProfilePage() {
     const [loadingAuth, setLoadingAuth] = useState(true);
     const [ticketCount, setTicketCount] = useState(0);
     const [likeCount, setLikeCount] = useState(0);
-    const [selected, setSelected] = useState<string[]>([]);
+    const [selected, setSelected] = useState<string[]>(getStoredInterests);
     const [saved, setSaved] = useState(false);
 
     useEffect(() => {
-        fetch(`${API_URL}/auth/me`, { credentials: "include" })
+        authFetch("/auth/me")
             .then((res) => {
                 if (!res.ok) throw new Error("Not authenticated");
                 return res.json();
@@ -69,16 +69,12 @@ export default function ProfilePage() {
     }, [router]);
 
     useEffect(() => {
-        setSelected(getStoredInterests());
-    }, []);
-
-    useEffect(() => {
         if (!user) return;
-        fetch(`${API_URL}/events/my`, { credentials: "include" })
+        authFetch("/events/my")
             .then((res) => res.json())
             .then((data) => setTicketCount(data.events?.length || 0))
             .catch(() => { });
-        fetch(`${API_URL}/favorites/ids`, { credentials: "include" })
+        authFetch("/favorites/ids")
             .then((res) => {
                 if (!res.ok) throw new Error();
                 return res.json();

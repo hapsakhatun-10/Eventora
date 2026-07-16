@@ -16,7 +16,7 @@ import {
 import UserMenu from "../../components/UserMenu";
 import { useToast } from "../../components/Toast";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+import { authFetch } from "../../utils/auth";
 
 interface Event {
     _id: string;
@@ -45,7 +45,7 @@ export default function ManageEventsPage() {
     const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
 
     useEffect(() => {
-        fetch(`${API_URL}/auth/me`, { credentials: "include" })
+        authFetch("/auth/me")
             .then((res) => {
                 if (!res.ok) throw new Error("Not authenticated");
                 return res.json();
@@ -57,7 +57,7 @@ export default function ManageEventsPage() {
 
     useEffect(() => {
         if (!user) return;
-        fetch(`${API_URL}/events/my`, { credentials: "include" })
+        authFetch("/events/my")
             .then((res) => res.json())
             .then((data) => setMyEvents(data.events || []))
             .catch(() => setMyEvents([]))
@@ -67,9 +67,8 @@ export default function ManageEventsPage() {
     const handleDelete = async (eventId: string) => {
         setDeletingId(eventId);
         try {
-            const res = await fetch(`${API_URL}/events/${eventId}`, {
+            const res = await authFetch(`/events/${eventId}`, {
                 method: "DELETE",
-                credentials: "include",
             });
             if (res.ok) {
                 setMyEvents((prev) => prev.filter((e) => e._id !== eventId));

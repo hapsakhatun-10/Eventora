@@ -12,6 +12,7 @@ import {
     Calendar,
 } from "lucide-react";
 import UserMenu from "../../components/UserMenu";
+import { authFetch } from "../../utils/auth";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
@@ -38,7 +39,7 @@ export default function LikedEventsPage() {
     const [eventsLoading, setEventsLoading] = useState(true);
 
     useEffect(() => {
-        fetch(`${API_URL}/auth/me`, { credentials: "include" })
+        authFetch("/auth/me")
             .then((res) => {
                 if (!res.ok) throw new Error("Not authenticated");
                 return res.json();
@@ -50,7 +51,7 @@ export default function LikedEventsPage() {
 
     useEffect(() => {
         if (!user) return;
-        fetch(`${API_URL}/favorites/ids`, { credentials: "include" })
+        authFetch("/favorites/ids")
             .then((res) => {
                 if (!res.ok) throw new Error("Failed to load favorites");
                 return res.json();
@@ -72,9 +73,8 @@ export default function LikedEventsPage() {
 
     const handleRemove = async (eventId: string) => {
         try {
-            await fetch(`${API_URL}/favorites/toggle`, {
+            await authFetch("/favorites/toggle", {
                 method: "POST",
-                credentials: "include",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ eventId }),
             });
