@@ -10,11 +10,12 @@ const nextConfig: NextConfig = {
     ],
   },
   async rewrites() {
+    const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
     return [
-      { source: "/api/payments/:path*", destination: "http://localhost:5000/payments/:path*" },
-      { source: "/api/events/:path*", destination: "http://localhost:5000/events/:path*" },
-      { source: "/api/auth/:path*", destination: "http://localhost:5000/auth/:path*" },
-      { source: "/api/follows/:path*", destination: "http://localhost:5000/follows/:path*" },
+      { source: "/api/payments/:path*", destination: `${apiBase}/payments/:path*` },
+      { source: "/api/events/:path*", destination: `${apiBase}/events/:path*` },
+      { source: "/api/auth/:path*", destination: `${apiBase}/auth/:path*` },
+      { source: "/api/follows/:path*", destination: `${apiBase}/follows/:path*` },
     ];
   },
 };
