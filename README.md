@@ -1,36 +1,70 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Evento — Frontend
 
-## Getting Started
+A modern event discovery and management platform built with Next.js, TypeScript, and Tailwind CSS.
 
-First, run the development server:
+## Live Demo
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+https://evento.vercel.app
+
+## Overview
+
+Evento is a full-stack event management platform designed to simplify the process of creating, discovering, and managing events. The platform provides an intuitive experience for both event organizers and attendees through a clean interface, responsive design, and streamlined booking workflow.
+
+Organizers can create and manage events with detailed information including banners, schedules, venues, pricing, and seat availability. Attendees can explore upcoming events, search by category or location, save favorites, and book tickets effortlessly.
+
+## Key Features
+
+* Secure authentication with Email/Password and Google Sign-In
+* Create, update, and manage events
+* Event discovery with search and filtering
+* Detailed event pages with venue and schedule information
+* Ticket booking and management
+* QR code-based ticket system
+* Favorite events functionality
+* Organizer follow system
+* Interactive map integration
+* Responsive design across desktop, tablet, and mobile devices
+
+## Technology Stack
+
+### Frontend
+
+* Next.js 16 (App Router)
+* React 19
+* TypeScript
+* Tailwind CSS
+* Lucide React
+
+### Backend & Services
+
+* Node.js
+* Express.js
+* MongoDB
+* Better Auth
+* ImgBB
+
+## Project Structure
+
+```text
+src/
+├── app/
+├── components/
+├── hooks/
+├── lib/
+├── providers/
+├── services/
+├── types/
+└── utils/
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Available Scripts
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Command       | Description                  |
+| ------------- | ---------------------------- |
+| npm run dev   | Runs the development server  |
+| npm run build | Creates a production build   |
+| npm run start | Starts the production server |
+| npm run lint  | Runs ESLint checks           |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## Learn More
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

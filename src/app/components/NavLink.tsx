@@ -8,7 +8,6 @@ interface NavLinkProps {
     href: string;
     children: ReactNode;
     className?: string;
-    /** Extra paths that should also count as "active" (e.g. /dashboard/manage matches /dashboard) */
     matchPaths?: string[];
 }
 

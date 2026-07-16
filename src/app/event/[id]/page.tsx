@@ -22,6 +22,7 @@ import {
     ChevronUp,
 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { useAuth } from "../../components/AuthContext";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
@@ -71,13 +72,7 @@ export default function EventDetailPage() {
     const [event, setEvent] = useState<EventData | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
-    const [liked, setLiked] = useState(() => {
-        if (typeof window === "undefined") return false;
-        try {
-            const stored = localStorage.getItem("evento_favorites");
-            return stored ? JSON.parse(stored).includes(id) : false;
-        } catch { return false; }
-    });
+    const [liked, setLiked] = useState(false);
     const [openFaq, setOpenFaq] = useState<number | null>(null);
     const [organizer, setOrganizer] = useState<OrganizerData | null>(null);
     const [reserving, setReserving] = useState(false);
@@ -113,6 +108,17 @@ export default function EventDetailPage() {
             .then((data) => setFollowing(data.following))
             .catch(() => {});
     }, [user, event?.createdBy]);
+
+    useEffect(() => {
+        if (!user || !id) return;
+        fetch(`${API_URL}/favorites/check/${id}`, { credentials: "include" })
+            .then((res) => {
+                if (!res.ok) throw new Error();
+                return res.json();
+            })
+            .then((data) => setLiked(data.favorited))
+            .catch(() => {});
+    }, [user, id]);
 
     const handleFollow = async () => {
         if (!user || !event?.createdBy) return;
@@ -153,20 +159,22 @@ export default function EventDetailPage() {
     const location = [event.venue, event.city].filter(Boolean).join(", ");
     const bannerUrl = event.banner || null;
 
-    const toggleLike = () => {
-        const next = !liked;
-        setLiked(next);
+    const toggleLike = async () => {
+        const prev = liked;
+        setLiked(!prev);
         try {
-            const stored = localStorage.getItem("evento_favorites");
-            const favorites: string[] = stored ? JSON.parse(stored) : [];
-            if (next) {
-                if (!favorites.includes(id)) favorites.push(id);
-            } else {
-                const idx = favorites.indexOf(id);
-                if (idx !== -1) favorites.splice(idx, 1);
-            }
-            localStorage.setItem("evento_favorites", JSON.stringify(favorites));
-        } catch {}
+            const res = await fetch(`${API_URL}/favorites/toggle`, {
+                method: "POST",
+                credentials: "include",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ eventId: id }),
+            });
+            if (!res.ok) throw new Error("Failed");
+            const data = await res.json();
+            setLiked(data.favorited);
+        } catch {
+            setLiked(prev);
+        }
     };
 
     const handleReserve = async () => {
@@ -181,22 +189,22 @@ export default function EventDetailPage() {
                 });
                 const data = await res.json();
                 if (res.ok) {
-                    window.location.href = `/payment/success?reserved=true&event_id=${id}`;
+                    window.location.href = "/tickets";
                 } else {
                     alert(data.message || "Failed to reserve spot");
                 }
             } else {
-                const res = await fetch(`${API_URL}/payments/checkout`, {
+                const res = await fetch(`${API_URL}/payments/book`, {
                     method: "POST",
                     credentials: "include",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ eventId: id, quantity: 1 }),
                 });
                 const data = await res.json();
-                if (res.ok && data.url) {
-                    window.location.href = data.url;
+                if (res.ok) {
+                    window.location.href = "/tickets";
                 } else {
-                    alert(data.message || "Failed to start checkout");
+                    alert(data.message || "Failed to book event");
                 }
             }
         } catch {
@@ -213,12 +221,13 @@ export default function EventDetailPage() {
             {/* Hero Banner - Full Width */}
             {bannerUrl && (
                 <div className="w-full h-72 sm:h-96 md:h-[480px] overflow-hidden relative">
-                    <img
+                    <Image
                         src={bannerUrl}
                         alt={event.title || "Event Banner"}
-                        loading="eager"
-                        fetchPriority="high"
-                        className="w-full h-full object-cover"
+                        fill
+                        priority
+                        sizes="100vw"
+                        className="object-cover"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
 
@@ -294,7 +303,7 @@ export default function EventDetailPage() {
                             <div className="flex items-center gap-2 bg-gray-50 border border-gray-200 py-2 px-4 rounded-xl text-gray-700">
                                 <Ticket size={16} className="text-gray-600" />
                                 <span className="text-sm font-semibold">
-                                    {event.price ? `৳${event.price.toLocaleString()}` : "Free"}
+                                    {event.price ? `${event.price.toLocaleString()}` : "Free"}
                                 </span>
                             </div>
                         </div>
@@ -498,11 +507,13 @@ export default function EventDetailPage() {
                             {/* Event Image */}
                             {bannerUrl && (
                                 <div className="relative -mx-6 -mt-6 sm:-mx-8 sm:-mt-8 mb-2 overflow-hidden rounded-t-3xl h-48 sm:h-56">
-                                    <img
+                                    <Image
                                         src={bannerUrl}
                                         alt={event.title || "Event Image"}
-                                        loading="eager"
-                                        className="w-full h-full object-cover"
+                                        fill
+                                        priority
+                                        sizes="(max-width: 640px) 100vw, 400px"
+                                        className="object-cover"
                                     />
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
                                 </div>
@@ -511,7 +522,7 @@ export default function EventDetailPage() {
                             {/* Price */}
                             <div className="space-y-1">
                                 <h3 className="text-3xl font-extrabold text-gray-900">
-                                    {event.price ? `৳${event.price.toLocaleString()}` : "Free"}
+                                    {event.price ? `${event.price.toLocaleString()}` : "Free"}
                                 </h3>
                                 <p className="text-sm text-gray-500 font-medium">per person</p>
                             </div>
@@ -539,7 +550,14 @@ export default function EventDetailPage() {
                             </div>
 
                             {/* Reserve Button */}
-                            {user && user.id === event.createdBy ? (
+                            {!user ? (
+                                <a
+                                    href="/login"
+                                    className="w-full bg-slate-900 text-white font-bold py-4 px-4 rounded-xl hover:bg-blue-900 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 text-center text-lg shadow-lg shadow-slate-900/25 flex items-center justify-center gap-2"
+                                >
+                                    Sign in to Reserve
+                                </a>
+                            ) : user.id === event.createdBy ? (
                                 <div className="w-full bg-gray-100 text-gray-500 font-semibold py-4 px-4 rounded-xl text-center text-lg">
                                     You are the organizer of this event
                                 </div>
@@ -552,10 +570,10 @@ export default function EventDetailPage() {
                                     {reserving ? (
                                         <>
                                             <Loader2 size={18} className="animate-spin" />
-                                            Redirecting to payment...
+                                            {event.price > 0 ? "Booking..." : "Reserving..."}
                                         </>
                                     ) : (
-                                        "Reserve a spot"
+                                        event.price > 0 ? "Book Now" : "Reserve a spot"
                                     )}
                                 </button>
                             )}

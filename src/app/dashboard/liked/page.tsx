@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import {
     Heart,
     MapPin,
@@ -29,25 +30,6 @@ interface Event {
     totalSeats?: number;
 }
 
-function getFavoriteIds(): string[] {
-    if (typeof window === "undefined") return [];
-    try {
-        const stored = localStorage.getItem("evento_favorites");
-        return stored ? JSON.parse(stored) : [];
-    } catch {
-        return [];
-    }
-}
-
-function removeFavorite(eventId: string) {
-    try {
-        const stored = localStorage.getItem("evento_favorites");
-        const favorites: string[] = stored ? JSON.parse(stored) : [];
-        const updated = favorites.filter((id) => id !== eventId);
-        localStorage.setItem("evento_favorites", JSON.stringify(updated));
-    } catch {}
-}
-
 export default function LikedEventsPage() {
     const router = useRouter();
     const [user, setUser] = useState<{ id: string; name: string } | null>(null);
@@ -68,20 +50,35 @@ export default function LikedEventsPage() {
 
     useEffect(() => {
         if (!user) return;
-        const ids = getFavoriteIds();
-        if (ids.length === 0) {
-            Promise.resolve().then(() => setEventsLoading(false));
-            return;
-        }
-        fetch(`${API_URL}/events/batch?ids=${ids.join(",")}`)
-            .then((res) => res.json())
-            .then((data) => setEvents(data.events || []))
+        fetch(`${API_URL}/favorites/ids`, { credentials: "include" })
+            .then((res) => {
+                if (!res.ok) throw new Error("Failed to load favorites");
+                return res.json();
+            })
+            .then((data) => {
+                const ids: string[] = data.ids || [];
+                if (ids.length === 0) {
+                    setEvents([]);
+                    setEventsLoading(false);
+                    return;
+                }
+                return fetch(`${API_URL}/events/batch?ids=${ids.join(",")}`)
+                    .then((res) => res.json())
+                    .then((data) => setEvents(data.events || []));
+            })
             .catch(() => setEvents([]))
             .finally(() => setEventsLoading(false));
     }, [user]);
 
-    const handleRemove = (eventId: string) => {
-        removeFavorite(eventId);
+    const handleRemove = async (eventId: string) => {
+        try {
+            await fetch(`${API_URL}/favorites/toggle`, {
+                method: "POST",
+                credentials: "include",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ eventId }),
+            });
+        } catch {}
         setEvents((prev) => prev.filter((e) => e._id !== eventId));
     };
 
@@ -134,12 +131,12 @@ export default function LikedEventsPage() {
                                         {/* Banner */}
                                         <Link href={`/event/${event._id}`} className="block relative h-44 overflow-hidden">
                                             {bannerUrl ? (
-                                                <img
+                                                <Image
                                                     src={bannerUrl}
                                                     alt={event.title}
-                                                    loading="lazy"
-                                                    decoding="async"
-                                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                                    fill
+                                                    sizes="(max-width: 640px) 100vw, 384px"
+                                                    className="object-cover group-hover:scale-105 transition-transform duration-300"
                                                 />
                                             ) : (
                                                 <div className="w-full h-full bg-linear-to-br from-slate-900 to-blue-900 flex items-center justify-center text-white font-bold">
@@ -179,7 +176,7 @@ export default function LikedEventsPage() {
 
                                             <div className="flex items-center justify-between pt-2 border-t border-gray-100">
                                                 <p className="text-sm font-semibold text-gray-800">
-                                                    {event.price ? `৳${event.price.toLocaleString()}` : "Free"}
+                                                    {event.price ? `$${event.price.toLocaleString()}` : "Free"}
                                                 </p>
                                                 {event.totalSeats ? (
                                                     <div className="flex items-center gap-1 text-xs text-gray-500">

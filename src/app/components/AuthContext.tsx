@@ -16,7 +16,7 @@ interface AuthContextType {
     authChecked: boolean;
     login: (email: string, password: string) => Promise<string | null>;
     register: (name: string, email: string, password: string) => Promise<string | null>;
-    logout: () => Promise<void>;
+    logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -83,21 +83,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
     };
 
-    const logout = async () => {
-        console.log("Logout clicked");
-        try {
-            const res = await fetch(`${API_URL}/auth/logout`, {
-                method: "POST",
-                credentials: "include",
-            });
-            console.log("Logout response:", res.status, await res.json());
-        } catch (err) {
-            console.error("Logout error:", err);
-        } finally {
-            console.log("Redirecting to home...");
-            setUser(null);
-            window.location.href = "/";
-        }
+    const logout = () => {
+        setUser(null);
+        fetch(`${API_URL}/auth/logout`, { method: "POST", credentials: "include" }).catch(() => {});
+        window.location.href = "/";
     };
 
     return (

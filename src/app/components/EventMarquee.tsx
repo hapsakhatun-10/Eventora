@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { MapPin, Clock, ArrowRight } from "lucide-react";
+import Image from "next/image";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
@@ -25,7 +26,7 @@ export default function EventMarquee() {
         fetch(`${API_URL}/events?limit=10`)
             .then((res) => res.json())
             .then((data) => setEvents(data.events || []))
-            .catch(() => {});
+            .catch(() => { });
     }, []);
 
     if (events.length === 0) return null;
@@ -66,11 +67,12 @@ export default function EventMarquee() {
                             >
                                 <div className="h-36 sm:h-40 bg-slate-100 overflow-hidden">
                                     {event.banner ? (
-                                        <img
+                                        <Image
                                             src={event.banner}
                                             alt={event.title}
-                                            loading="lazy"
-                                            className="w-full h-full object-cover group-hover/card:scale-105 transition-transform duration-300"
+                                            fill
+                                            sizes="(max-width: 640px) 256px, 288px"
+                                            className="object-cover group-hover/card:scale-105 transition-transform duration-300"
                                         />
                                     ) : (
                                         <div className="w-full h-full bg-gradient-to-br from-slate-900 to-blue-900 flex items-center justify-center text-white text-sm font-bold">
@@ -93,7 +95,7 @@ export default function EventMarquee() {
                                         </p>
                                     )}
                                     <p className="text-sm font-semibold text-slate-800 mt-2">
-                                        {event.price ? `৳${event.price.toLocaleString()}` : "Free"}
+                                        {event.price ? `$${event.price.toLocaleString()}` : "Free"}
                                     </p>
                                 </div>
                             </Link>

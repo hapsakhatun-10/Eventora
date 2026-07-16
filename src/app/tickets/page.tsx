@@ -1,14 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState, useRef, useCallback } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import {
     Ticket,
     Calendar,
     MapPin,
     Loader2,
     Search,
+    CreditCard,
 } from "lucide-react";
 import UserMenu from "../components/UserMenu";
 
@@ -50,10 +52,20 @@ function isUpcoming(dateStr: string): boolean {
 
 export default function TicketsPage() {
     const router = useRouter();
+    const searchParams = useSearchParams();
     const [user, setUser] = useState<{ id: string; name: string } | null>(null);
     const [loadingAuth, setLoadingAuth] = useState(true);
     const [tickets, setTickets] = useState<TicketItem[]>([]);
     const [ticketsLoading, setTicketsLoading] = useState(true);
+    const confirmedSessionRef = useRef(false);
+
+    const fetchTickets = useCallback(() => {
+        fetch(`${API_URL}/payments/my-tickets`, { credentials: "include" })
+            .then((res) => res.json())
+            .then((data) => setTickets(data.tickets || []))
+            .catch(() => setTickets([]))
+            .finally(() => setTicketsLoading(false));
+    }, []);
 
     useEffect(() => {
         fetch(`${API_URL}/auth/me`, { credentials: "include" })
@@ -67,13 +79,27 @@ export default function TicketsPage() {
     }, [router]);
 
     useEffect(() => {
+        const sessionId = searchParams.get("session_id");
+        if (!sessionId || confirmedSessionRef.current) return;
+        confirmedSessionRef.current = true;
+
+        window.history.replaceState({}, "", "/tickets");
+
+        fetch(`${API_URL}/payments/confirm`, {
+            method: "POST",
+            credentials: "include",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ sessionId }),
+        }).then(() => {
+            setTicketsLoading(true);
+            fetchTickets();
+        }).catch(() => {});
+    }, [searchParams, fetchTickets]);
+
+    useEffect(() => {
         if (!user) return;
-        fetch(`${API_URL}/payments/my-tickets`, { credentials: "include" })
-            .then((res) => res.json())
-            .then((data) => setTickets(data.tickets || []))
-            .catch(() => setTickets([]))
-            .finally(() => setTicketsLoading(false));
-    }, [user]);
+        fetchTickets();
+    }, [user, fetchTickets]);
 
     if (loadingAuth || !user) {
         return (
@@ -83,8 +109,10 @@ export default function TicketsPage() {
         );
     }
 
-    const upcoming = tickets.filter((t) => isUpcoming(t.event?.date || ""));
-    const past = tickets.filter((t) => !isUpcoming(t.event?.date || ""));
+    const pending = tickets.filter((t) => t.status === "pending");
+    const confirmed = tickets.filter((t) => t.status === "confirmed");
+    const upcomingConfirmed = confirmed.filter((t) => isUpcoming(t.event?.date || ""));
+    const past = confirmed.filter((t) => !isUpcoming(t.event?.date || ""));
 
     return (
         <div className="min-h-screen bg-gray-50">
@@ -121,11 +149,22 @@ export default function TicketsPage() {
                         </div>
                     ) : (
                         <div className="space-y-8">
-                            {upcoming.length > 0 && (
+                            {pending.length > 0 && (
+                                <section>
+                                    <h2 className="text-lg font-bold text-amber-600 mb-4">Pending Payment</h2>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        {pending.map((ticket) => (
+                                            <TicketCard key={ticket._id} ticket={ticket} onPaymentDone={fetchTickets} />
+                                        ))}
+                                    </div>
+                                </section>
+                            )}
+
+                            {upcomingConfirmed.length > 0 && (
                                 <section>
                                     <h2 className="text-lg font-bold text-gray-900 mb-4">Upcoming</h2>
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                        {upcoming.map((ticket) => (
+                                        {upcomingConfirmed.map((ticket) => (
                                             <TicketCard key={ticket._id} ticket={ticket} />
                                         ))}
                                     </div>
@@ -150,7 +189,9 @@ export default function TicketsPage() {
     );
 }
 
-function TicketCard({ ticket }: { ticket: TicketItem }) {
+function TicketCard({ ticket, onPaymentDone }: { ticket: TicketItem; onPaymentDone?: () => void }) {
+    const router = useRouter();
+    const [paying, setPaying] = useState(false);
     const event = ticket.event;
     const title = event?.title || "Event";
     const date = event?.date || "";
@@ -160,17 +201,40 @@ function TicketCard({ ticket }: { ticket: TicketItem }) {
     const banner = event?.banner || "";
     const category = event?.category || "";
     const location = [venue, city].filter(Boolean).join(", ");
+    const isPending = ticket.status === "pending";
+
+    const handlePayNow = async () => {
+        setPaying(true);
+        try {
+            const res = await fetch(`${API_URL}/payments/pay-pending`, {
+                method: "POST",
+                credentials: "include",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ ticketId: ticket._id }),
+            });
+            const data = await res.json();
+            if (res.ok && data.url) {
+                window.location.href = data.url;
+            } else {
+                alert(data.message || "Failed to start payment");
+            }
+        } catch {
+            alert("Something went wrong. Please try again.");
+        } finally {
+            setPaying(false);
+        }
+    };
 
     return (
-        <div className="rounded-2xl border border-gray-200 bg-white overflow-hidden hover:shadow-lg transition-shadow group">
+        <div className={`rounded-2xl border bg-white overflow-hidden hover:shadow-lg transition-shadow group ${isPending ? "border-amber-200" : "border-gray-200"}`}>
             <Link href={`/event/${ticket.eventId}`} className="block relative h-40 overflow-hidden">
                 {banner ? (
-                    <img
+                    <Image
                         src={banner}
                         alt={title}
-                        loading="lazy"
-                        decoding="async"
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        fill
+                        sizes="(max-width: 640px) 100vw, 384px"
+                        className="object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                 ) : (
                     <div className="w-full h-full bg-gradient-to-br from-slate-900 to-blue-900 flex items-center justify-center text-white font-bold text-sm">
@@ -178,9 +242,15 @@ function TicketCard({ ticket }: { ticket: TicketItem }) {
                     </div>
                 )}
                 <div className="absolute top-3 left-3">
-                    <span className="inline-block rounded-lg bg-green-500 text-white text-[11px] font-bold px-2.5 py-1 uppercase tracking-wide">
-                        Confirmed
-                    </span>
+                    {isPending ? (
+                        <span className="inline-block rounded-lg bg-amber-500 text-white text-[11px] font-bold px-2.5 py-1 uppercase tracking-wide">
+                            Pending Payment
+                        </span>
+                    ) : (
+                        <span className="inline-block rounded-lg bg-green-500 text-white text-[11px] font-bold px-2.5 py-1 uppercase tracking-wide">
+                            Confirmed
+                        </span>
+                    )}
                 </div>
             </Link>
 
@@ -204,11 +274,15 @@ function TicketCard({ ticket }: { ticket: TicketItem }) {
                 )}
 
                 <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-                    <span className="font-mono text-xs tracking-wider text-gray-600">
-                        {ticket.ticketCode}
-                    </span>
+                    {isPending ? (
+                        <span className="text-xs text-amber-600 font-medium">Awaiting payment</span>
+                    ) : (
+                        <span className="font-mono text-xs tracking-wider text-gray-600">
+                            {ticket.ticketCode}
+                        </span>
+                    )}
                     <p className="text-sm font-bold text-slate-900">
-                        {ticket.totalPaid > 0 ? `$${ticket.totalPaid.toLocaleString()}` : "Free"}
+                        {ticket.event?.price ? `$${ticket.event.price.toLocaleString()}` : "Free"}
                     </p>
                 </div>
 
@@ -217,6 +291,31 @@ function TicketCard({ ticket }: { ticket: TicketItem }) {
                     <span>·</span>
                     <span>#{String(ticket._id).slice(-6).toUpperCase()}</span>
                 </div>
+
+                <div className="flex items-center gap-1.5 text-[11px] text-gray-400 font-mono">
+                    <span>Event ID:</span>
+                    <span className="text-gray-500">{ticket.eventId}</span>
+                </div>
+
+                {isPending && (
+                    <button
+                        onClick={handlePayNow}
+                        disabled={paying}
+                        className="w-full mt-2 bg-amber-500 text-white font-bold py-3 px-4 rounded-xl hover:bg-amber-600 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 text-center text-sm shadow-lg shadow-amber-500/25 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    >
+                        {paying ? (
+                            <>
+                                <Loader2 size={16} className="animate-spin" />
+                                Redirecting to payment...
+                            </>
+                        ) : (
+                            <>
+                                <CreditCard size={16} />
+                                Pay Now
+                            </>
+                        )}
+                    </button>
+                )}
             </div>
         </div>
     );

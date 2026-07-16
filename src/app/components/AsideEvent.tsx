@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState, useEffect } from 'react';
+import Image from 'next/image';
 import { Calendar, MapPin, ChevronDown, ChevronUp } from 'lucide-react';
 
 interface AsideEventProps {
@@ -95,10 +96,12 @@ const AsideEvent = ({
                         <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
                             <div className="relative h-44 overflow-hidden">
                                 {bannerUrl ? (
-                                    <img
+                                    <Image
                                         src={bannerUrl}
                                         alt="Event banner preview"
-                                        className="absolute inset-0 h-full w-full object-cover"
+                                        fill
+                                        sizes="320px"
+                                        className="object-cover"
                                     />
                                 ) : (
                                     <>

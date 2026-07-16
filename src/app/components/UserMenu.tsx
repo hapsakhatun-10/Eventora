@@ -9,11 +9,12 @@ import {
   Heart,
   UserPlus,
   Compass,
-  Settings,
   LogOut,
 } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useAuth } from "./AuthContext";
+
+const sora = { fontFamily: "var(--font-sora)" };
 
 const menuSections = [
   [
@@ -55,13 +56,6 @@ const menuSections = [
       href: "/interests",
     },
   ],
-  [
-    {
-      label: "Account Settings",
-      icon: Settings,
-      href: "/settings",
-    },
-  ],
 ];
 
 export default function UserMenu() {
@@ -71,11 +65,9 @@ export default function UserMenu() {
   return (
     <aside className="w-[340px] rounded-2xl border border-slate-200 bg-white shadow-xl overflow-hidden">
       {/* Header */}
-      <Link href="/dashboard" className="block px-7 py-6 border-b bg-gradient-to-r from-slate-900 via-blue-900 to-slate-800">
-        <h2 className="text-white text-xl font-bold">My Account</h2>
-        <p className="text-slate-300 text-sm mt-1">
-          Manage your events and profile
-        </p>
+      <Link href="/" className="block px-7 py-6 border-b bg-gradient-to-r from-slate-900 via-blue-900 to-slate-800">
+        <span className="text-[28px] font-black lowercase text-white leading-none" style={sora}>e</span>
+        <span className="text-[18px] font-bold tracking-tight lowercase text-white leading-none" style={sora}>vento</span>
       </Link>
 
       <div className="py-3">
@@ -87,7 +79,7 @@ export default function UserMenu() {
           >
             {section.map((item) => {
               const Icon = item.icon;
-              const active = pathname === item.href || (item.href !== "/find-events" && item.href !== "/help" && item.href !== "/tickets" && item.href !== "/following" && item.href !== "/interests" && item.href !== "/settings" && pathname.startsWith(item.href));
+              const active = pathname === item.href || (item.href !== "/find-events" && item.href !== "/help" && item.href !== "/tickets" && item.href !== "/following" && item.href !== "/interests" && pathname.startsWith(item.href));
 
               return (
                 <Link

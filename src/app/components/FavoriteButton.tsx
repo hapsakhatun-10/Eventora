@@ -1,40 +1,49 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Heart } from "lucide-react";
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
 interface FavoriteButtonProps {
     eventId: string;
 }
 
-function getInitialFavorite(eventId: string): boolean {
-    if (typeof window === "undefined") return false;
-    try {
-        const stored = localStorage.getItem("evento_favorites");
-        if (stored) return JSON.parse(stored).includes(eventId);
-    } catch {}
-    return false;
-}
-
 export default function FavoriteButton({ eventId }: FavoriteButtonProps) {
-    const [isFavorite, setIsFavorite] = useState(() => getInitialFavorite(eventId));
+    const [isFavorite, setIsFavorite] = useState(false);
+    const [loading, setLoading] = useState(true);
 
-    const toggleFavorite = (e: React.MouseEvent) => {
+    useEffect(() => {
+        fetch(`${API_URL}/favorites/check/${eventId}`, { credentials: "include" })
+            .then((res) => {
+                if (!res.ok) throw new Error("Not authenticated");
+                return res.json();
+            })
+            .then((data) => setIsFavorite(data.favorited))
+            .catch(() => {})
+            .finally(() => setLoading(false));
+    }, [eventId]);
+
+    const toggleFavorite = async (e: React.MouseEvent) => {
         e.stopPropagation();
-        const next = !isFavorite;
-        setIsFavorite(next);
+        if (loading) return;
+
+        const prev = isFavorite;
+        setIsFavorite(!prev);
 
         try {
-            const stored = localStorage.getItem("evento_favorites");
-            const favorites: string[] = stored ? JSON.parse(stored) : [];
-            if (next) {
-                if (!favorites.includes(eventId)) favorites.push(eventId);
-            } else {
-                const idx = favorites.indexOf(eventId);
-                if (idx !== -1) favorites.splice(idx, 1);
-            }
-            localStorage.setItem("evento_favorites", JSON.stringify(favorites));
-        } catch {}
+            const res = await fetch(`${API_URL}/favorites/toggle`, {
+                method: "POST",
+                credentials: "include",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ eventId }),
+            });
+            if (!res.ok) throw new Error("Failed");
+            const data = await res.json();
+            setIsFavorite(data.favorited);
+        } catch {
+            setIsFavorite(prev);
+        }
     };
 
     return (

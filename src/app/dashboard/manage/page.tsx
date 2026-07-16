@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import {
     Plus,
     Trash2,
@@ -133,7 +134,7 @@ export default function ManageEventsPage() {
                         </div>
                         <div className="rounded-xl border border-gray-200 bg-white p-4">
                             <p className="text-2xl font-extrabold text-slate-900">
-                                ৳{myEvents.reduce((sum, e) => sum + (e.price || 0), 0).toLocaleString()}
+                                ${myEvents.reduce((sum, e) => sum + (e.price || 0), 0).toLocaleString()}
                             </p>
                             <p className="text-xs text-gray-500 mt-0.5">Total Value</p>
                         </div>
@@ -175,7 +176,7 @@ export default function ManageEventsPage() {
                                             {/* Thumbnail */}
                                             <Link href={`/event/${event._id}`} className="h-16 w-16 flex-shrink-0 rounded-xl bg-gray-100 overflow-hidden hover:opacity-80 transition-opacity">
                                                 {bannerUrl ? (
-                                                    <img src={bannerUrl} alt={event.title} loading="lazy" decoding="async" className="h-full w-full object-cover" />
+                                                    <Image src={bannerUrl} alt={event.title} width={64} height={64} className="h-full w-full object-cover" />
                                                 ) : (
                                                     <div className="h-full w-full bg-linear-to-br from-slate-900 to-blue-900 flex items-center justify-center text-white text-[10px] font-bold">
                                                         {event.category || "Event"}
@@ -209,7 +210,7 @@ export default function ManageEventsPage() {
 
                                             {/* Price */}
                                             <div className="text-sm font-semibold text-gray-800 shrink-0 hidden sm:block">
-                                                {event.price ? `৳${event.price.toLocaleString()}` : "Free"}
+                                                {event.price ? `$${event.price.toLocaleString()}` : "Free"}
                                             </div>
 
                                             {/* Seats */}

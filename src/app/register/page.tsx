@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Ticket, Eye, EyeOff, Loader2 } from "lucide-react";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { useAuth } from "../components/AuthContext";
 
 export default function RegisterPage() {
@@ -51,14 +51,9 @@ export default function RegisterPage() {
         <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4 py-12">
             <div className="w-full max-w-md">
                 <div className="text-center mb-8">
-                    <Link href="/" className="inline-flex items-center gap-2 mb-4">
-                        <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-slate-900 to-blue-900 text-white shadow-md">
-                            <Ticket className="h-5 w-5" />
-                        </div>
-                        <h1 className="text-2xl font-extrabold tracking-tight">
-                            <span className="text-slate-900">Even</span>
-                            <span className="text-slate-500">to</span>
-                        </h1>
+                    <Link href="/" className="inline-flex items-baseline gap-0.5 mb-4">
+                        <span className="text-[28px] font-black lowercase text-slate-900 leading-none">e</span>
+                        <span className="text-[18px] font-bold tracking-tight lowercase text-slate-900 leading-none">vento</span>
                     </Link>
                     <h2 className="text-2xl font-bold text-slate-900">Create your account</h2>
                     <p className="text-sm text-slate-500 mt-1">Join Eventora to discover and create events</p>

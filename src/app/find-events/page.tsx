@@ -1,6 +1,8 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
+import { useSearchParams } from "next/navigation";
+import Image from "next/image";
 import {
     MapPin,
     Loader2,
@@ -16,7 +18,7 @@ import Sidebar from "../components/Sidebar";
 import ShareButton from "../components/ShareButton";
 import FavoriteButton from "../components/FavoriteButton";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+const API_URL = "/api";
 
 interface RawEvent {
     _id: string;
@@ -37,6 +39,8 @@ interface RawEvent {
 }
 
 export default function EventDiscoveryPage() {
+    const searchParams = useSearchParams();
+    const confirmedSessionRef = useRef(false);
     const [events, setEvents] = useState<RawEvent[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
@@ -47,9 +51,27 @@ export default function EventDiscoveryPage() {
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
 
-    const fetchEvents = useCallback((categories: string[], pageNum: number) => {
+    // Auto-confirm payment session after Stripe redirect
+    useEffect(() => {
+        const sessionId = searchParams.get("session_id");
+        if (!sessionId || confirmedSessionRef.current) return;
+        confirmedSessionRef.current = true;
+
+        window.history.replaceState({}, "", "/find-events");
+
+        fetch(`${API_URL}/payments/confirm`, {
+            method: "POST",
+            credentials: "include",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ sessionId }),
+        }).catch(() => {});
+    }, [searchParams]);
+
+    const fetchEvents = useCallback((categories: string[], pageNum: number, search: string, location: string) => {
         const params = new URLSearchParams({ limit: "5", page: String(pageNum) });
         if (categories.length > 0) params.set("categories", categories.join(","));
+        if (search) params.set("search", search);
+        if (location) params.set("location", location);
         fetch(`${API_URL}/events?${params}`)
             .then((res) => res.json())
             .then((data) => { setEvents(data.events || []); setTotalPages(data.totalPages || 1); setLoading(false); setError(""); })
@@ -57,8 +79,10 @@ export default function EventDiscoveryPage() {
     }, []);
 
     useEffect(() => {
-        fetchEvents(selectedCategories, page);
-    }, [fetchEvents, selectedCategories, page]);
+        const search = searchParams.get("search") || "";
+        const location = searchParams.get("location") || "";
+        fetchEvents(selectedCategories, page, search, location);
+    }, [fetchEvents, selectedCategories, page, searchParams]);
 
     const handleCategoryChange = useCallback((cats: string[]) => {
         setSelectedCategories(cats);
@@ -107,10 +131,16 @@ export default function EventDiscoveryPage() {
                     <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0">
                             <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight">
-                                Events and Things to do in Dhaka, Bangladesh
+                                {searchParams.get("search") || searchParams.get("location")
+                                    ? `Results for "${searchParams.get("search") || ""}${searchParams.get("search") && searchParams.get("location") ? " in " : ""}${searchParams.get("location") || ""}"`
+                                    : "Events and Things to do in Dhaka, Bangladesh"
+                                }
                             </h1>
                             <p className="text-xs sm:text-sm text-slate-500 mt-1">
-                                Search for something you love or check out popular events in your area.
+                                {searchParams.get("search") || searchParams.get("location")
+                                    ? `Showing events matching your search`
+                                    : "Search for something you love or check out popular events in your area."
+                                }
                             </p>
                         </div>
                         <button
@@ -129,7 +159,7 @@ export default function EventDiscoveryPage() {
                 ) : error ? (
                     <div className="text-center py-16">
                         <p className="text-red-500 text-lg font-medium">{error}</p>
-                        <button onClick={() => fetchEvents(selectedCategories, page)} className="mt-3 text-sm font-semibold text-slate-900 hover:underline">Retry</button>
+                        <button onClick={() => fetchEvents(selectedCategories, page, searchParams.get("search") || "", searchParams.get("location") || "")} className="mt-3 text-sm font-semibold text-slate-900 hover:underline">Retry</button>
                     </div>
                 ) : events.length === 0 ? (
                     <div className="text-center py-16">
@@ -145,14 +175,14 @@ export default function EventDiscoveryPage() {
                                 href={`/event/${event._id}`}
                                 className="flex flex-col sm:flex-row gap-3 sm:gap-4 border-b border-slate-100 pb-5 group cursor-pointer"
                             >
-                                <div className="w-full sm:w-48 h-40 sm:h-32 flex-shrink-0 bg-slate-100 rounded-xl overflow-hidden">
+                                <div className="relative w-full sm:w-48 h-40 sm:h-32 flex-shrink-0 bg-slate-100 rounded-xl overflow-hidden">
                                     {bannerUrl ? (
-                                        <img
+                                        <Image
                                             src={bannerUrl}
                                             alt={event.title}
-                                            loading="lazy"
-                                            decoding="async"
-                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+                                            fill
+                                            sizes="(max-width: 640px) 100vw, 192px"
+                                            className="object-cover group-hover:scale-105 transition-transform duration-200"
                                         />
                                     ) : (
                                         <div className="w-full h-full bg-gradient-to-br from-slate-900 to-blue-900 flex items-center justify-center text-white text-xs font-bold">
@@ -180,7 +210,7 @@ export default function EventDiscoveryPage() {
                                     <div className="mt-2 flex items-center justify-between gap-2">
                                         <div className="flex items-center gap-2 flex-wrap">
                                             <p className="text-sm font-semibold text-slate-800">
-                                                {event.price ? `৳${event.price.toLocaleString()}` : "Free"}
+                                                {event.price ? `$${event.price.toLocaleString()}` : "Free"}
                                             </p>
                                             <div className="flex items-center gap-1 bg-slate-100 text-slate-700 text-[10px] sm:text-[11px] font-semibold px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full">
                                                 <Clock size={11} />
